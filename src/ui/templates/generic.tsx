@@ -1,12 +1,12 @@
-import * as React from "react";
-import "./generic.css";
+import * as React from 'react';
+import './generic.css';
+import { Link } from 'react-router-dom';
+import { paths } from 'pages/paths';
 
 export const GenericTemplate: React.FC = ({ children }) => (
   <>
     <nav className="navigation">
-      <a href="https://effector.now.sh">Effector</a>
-      <a href="https://share.effector.dev">Playground</a>
-      <a href="https://github.com/sergeysova/cra-template-effector">GitHub</a>
+      <Link to={paths.home()}>Home</Link>
     </nav>
     <main>{children}</main>
   </>
