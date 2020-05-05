@@ -2,7 +2,7 @@
 # ---- Build ----
 FROM node:12.16.1-alpine3.9 as build
 
-LABEL img.name="admin-frontend/main" \
+LABEL img.name="admin-frontend/admin" \
   img.description="Frontend for Admin" \
   img.vcs-url="https://github.com/authmenow/admin-frontend" \
   maintainer="Sergey Sova <mail@sergeysova.com>"
