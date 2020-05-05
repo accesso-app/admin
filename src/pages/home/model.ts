@@ -1,9 +1,6 @@
-import { MouseEvent } from "react";
-import { createStore, createEvent } from "effector";
+import { createEvent } from 'effector';
+import { checkAuthenticated } from 'features/session';
 
-export const incrementClicked = createEvent<MouseEvent<HTMLButtonElement>>();
-export const resetClicked = createEvent<MouseEvent<HTMLButtonElement>>();
+export const pageMounted = createEvent();
 
-export const $counterValue = createStore(0);
-
-$counterValue.on(incrementClicked, state => state + 1).reset(resetClicked);
+const pageReady = checkAuthenticated({ when: pageMounted });

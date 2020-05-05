@@ -2,8 +2,8 @@ import * as React from 'react';
 
 import * as model from './model';
 
-export const HomePage: React.FC = () => {
+export const LoginPage: React.FC = () => {
   React.useEffect(() => model.pageMounted(), []);
 
-  return <div>Hello</div>;
+  return <div>Login</div>;
 };

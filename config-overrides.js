@@ -1,9 +1,5 @@
-const {
-  override,
-  fixBabelImports,
-  addLessLoader,
-  addBabelPlugin,
-} = require('customize-cra');
+/* eslint-disable import/no-extraneous-dependencies */
+const { override, fixBabelImports, addBabelPlugin } = require('customize-cra');
 
 module.exports = override(
   fixBabelImports('import', {
@@ -12,12 +8,4 @@ module.exports = override(
     style: true,
   }),
   addBabelPlugin(['effector/babel-plugin']),
-  addLessLoader({
-    javascriptEnabled: true,
-    modifyVars: {
-      '@primary-color': '#ff4533',
-      '@layout-header-background': '#3f4245',
-      '@menu-dark-item-active-bg': '#3f4245',
-    },
-  }),
 );

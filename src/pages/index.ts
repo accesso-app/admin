@@ -1,5 +1,5 @@
-import * as React from "react";
-import { renderRoutes } from "react-router-config";
-import { ROUTES } from "./routes";
+import * as React from 'react';
+import { renderRoutes } from 'react-router-config';
+import { routes } from './routes';
 
-export const Pages: React.FC = () => renderRoutes(ROUTES);
+export const Pages: React.FC = () => renderRoutes(routes);
