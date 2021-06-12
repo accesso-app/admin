@@ -1,5 +1,4 @@
-import * as React from "react";
-import "./generic.css";
+import * as React from 'react';
 
 export const GenericTemplate: React.FC = ({ children }) => (
   <>
