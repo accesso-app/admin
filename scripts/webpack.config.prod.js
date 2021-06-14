@@ -23,7 +23,7 @@ module.exports = merge(baseConfig, {
       },
     },
     minimize: true,
-    minimizer: [new TerserPlugin()],
+    minimizer: [new TerserPlugin({ parallel: true })],
   },
   plugins: [new CopyPlugin([{ from: 'public/static', to: '[name].[ext]' }])],
 });

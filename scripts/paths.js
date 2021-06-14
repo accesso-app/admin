@@ -12,7 +12,7 @@ module.exports = {
   appBuild: resolveApp(`build/${process.env.BUILD_PATH}`),
   appPublic: resolveApp('public'),
   appHtml: resolveApp('public/index.html'),
-  appIndexJs: resolveApp('src/index.tsx'),
+  appIndexJs: resolveApp('src/app/index.tsx'),
   appPackageJson: resolveApp('package.json'),
   appSrc: resolveApp('src'),
   yarnLockFile: resolveApp('yarn.lock'),
