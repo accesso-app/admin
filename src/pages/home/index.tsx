@@ -1,14 +1,14 @@
-import * as React from 'react';
-import { useStore } from 'effector-react';
-import { $counterValue, incrementClicked, resetClicked } from './model';
+import { contract } from 'framework';
+import * as page from './page';
+import * as model from './model';
 
-export const HomePage: React.FC = () => (
-  <div className="hero">
-    <h1>Effector</h1>
-    <h2>Counter value: {useStore($counterValue)}</h2>
-    <div data-block="buttons">
-      <button onClick={incrementClicked}>Increment</button>
-      <button onClick={resetClicked}>Reset</button>
-    </div>
-  </div>
-);
+export { HomePage as default } from './page';
+
+contract({
+  page,
+  model: {
+    ...model,
+    incrementClicked: model.incrementClicked.prepend(() => void 0),
+    resetClicked: model.resetClicked.prepend(() => void 0),
+  },
+});
