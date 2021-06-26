@@ -1,5 +1,4 @@
-import { createEvent } from 'effector';
-import { forward } from 'effector/effector.cjs';
+import { createEvent, forward } from 'effector';
 
 export const sessionLoadFinished = createEvent();
 export const sessionLoad = createEvent();
