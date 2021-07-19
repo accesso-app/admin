@@ -9,6 +9,11 @@ export const ROUTES = [
     component: loadable(() => import(/* webpackChunkName: "home" */ './home')),
   },
   {
+    path: PATHS.login(),
+    exact: true,
+    component: loadable(() => import(/* webpackChunkName: "login" */ './login')),
+  },
+  {
     path: '*',
     component: Error404Page,
   },

@@ -5,14 +5,15 @@ import { createBrowserApplication } from 'framework';
 import { forward } from 'effector';
 import { History } from 'history';
 
-import * as navigation from 'entities/navigation';
-import { sessionLoad, sessionLoadFinished } from 'entities/session';
+import * as navigation from 'features/navigation';
+import { sessionLoaded } from 'features/session';
 import { ROUTES } from 'pages/routes';
+import { readyToLoadSession } from 'features/session/model';
 import { Application } from './application';
 import * as serviceWorker from './service-worker';
 
 const app = createBrowserApplication({
-  ready: sessionLoadFinished,
+  ready: sessionLoaded.map(noop),
   routes: ROUTES,
 });
 
@@ -35,8 +36,8 @@ forward({
   to: app.navigation.historyReplace,
 });
 
-sessionLoadFinished.watch(() => render(app!.navigation.history!));
-sessionLoad();
+sessionLoaded.watch(() => render(app!.navigation.history!));
+readyToLoadSession();
 
 function render(history: History<any>) {
   ReactDOM.render(
@@ -46,6 +47,8 @@ function render(history: History<any>) {
     document.querySelector('#root'),
   );
 }
+
+function noop(): void {}
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

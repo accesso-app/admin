@@ -5,7 +5,10 @@ import { reflect } from '@effector/reflect';
 import { withHatch } from 'framework';
 
 import { format } from 'shared/lib/format';
+import { checkAuthenticated } from '../../features/session';
 import { hatch } from './contract';
+
+checkAuthenticated({ when: hatch.enter });
 
 export const $counterValue = createStore(0);
 export const incrementClicked = createEvent<React.MouseEvent<HTMLButtonElement>>();
