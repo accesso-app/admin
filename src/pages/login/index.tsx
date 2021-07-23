@@ -10,3 +10,5 @@ contract({
     ...model,
   },
 });
+
+function noop() {}

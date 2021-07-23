@@ -413,11 +413,6 @@ export type SessionGetFail =
 export const sessionGet = createEffect<SessionGet, SessionGetDone, SessionGetFail>({
   async handler() {
     const name = 'sessionGet.body';
-    await new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve(true);
-      }, 1000);
-    });
     const response = await requestFx({
       path: '/session/get',
       method: 'POST',
