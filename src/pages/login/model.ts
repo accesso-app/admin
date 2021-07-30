@@ -1,4 +1,5 @@
 import { createEffect, createEvent, forward } from 'effector';
+import { loadAuthSettingsFx, OAuthSettings } from '../../features/auth';
 
 export const loginClicked = createEvent();
 
