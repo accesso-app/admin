@@ -8,6 +8,7 @@ contract({
   page,
   model: {
     ...model,
+    loginBtnClicked: model.loginClicked.prepend(() => noop),
   },
 });
 

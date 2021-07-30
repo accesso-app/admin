@@ -1,8 +1,11 @@
 import React from 'react';
 import { withHatch } from 'framework';
 import styled from 'styled-components';
+import { createEvent } from 'effector';
 import { checkAnonymous } from '../../features/session/model';
 import { hatch } from './contract';
+
+export const loginBtnClicked = createEvent<React.MouseEvent<HTMLButtonElement>>();
 
 const LoginButton = styled.button`
   font-size: var(--button-font-size-normal);
@@ -24,7 +27,7 @@ const Container = styled.div`
 export const LoginPage = withHatch(hatch, () => {
   return (
     <Container>
-      <LoginButton> Login via Accesso </LoginButton>
+      <LoginButton onClick={loginBtnClicked}> Login via Accesso </LoginButton>
     </Container>
   );
 });
