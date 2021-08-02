@@ -14,6 +14,11 @@ export const ROUTES = [
     component: loadable(() => import(/* webpackChunkName: "login" */ './login')),
   },
   {
+    path: PATHS.oauthDone(),
+    exact: true,
+    component: loadable(() => import(/* webpackChunkName: "login" */ './oauth-done')),
+  },
+  {
     path: '*',
     component: Error404Page,
   },

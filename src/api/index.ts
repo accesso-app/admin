@@ -383,7 +383,7 @@ type SessionGet = {};
 /* Session exists */
 export const sessionGetOk = typed.object({
   /* Current user in a session */
-  user: typed.object({
+  userInfo: typed.object({
     firstName: typed.string,
     lastName: typed.string,
   }),
@@ -488,3 +488,112 @@ export const sessionDelete = createEffect<SessionDelete, SessionDeleteDone, Sess
   },
 });
 //#endregion sessionDelete
+
+/* --- */
+//#region oauthSettingsGet
+/* Settings exists */
+export const oauthSettingsGetOk = typed.object({
+  accessoUrl: typed.string,
+});
+export type OAuthSettingsGetDone = {
+  status: 'ok';
+  answer: typed.Get<typeof oauthSettingsGetOk>;
+};
+
+/* User not authorized */
+export const oauthSettingsGetUnauthorized = typed.nul;
+
+export type OAuthSettingsGetParams = {
+  state: string;
+};
+
+/* Something went wrong */
+export const oauthSettingsGetInternalServerError = typed.nul;
+export type OAuthSettingsGetFail =
+  | {
+      status: 'unauthorized';
+      error: typed.Get<typeof oauthSettingsGetUnauthorized>;
+    }
+  | {
+      status: 'internal_server_error';
+      error: typed.Get<typeof oauthSettingsGetInternalServerError>;
+    }
+  | GenericErrors;
+
+/* Read session token and show current session. Authenticated checked by session-token cookie */
+export const oauthSettingsGet = createEffect<
+  OAuthSettingsGetParams,
+  OAuthSettingsGetDone,
+  OAuthSettingsGetFail
+>({
+  async handler({ state }) {
+    const name = 'oauthSettingsGet.body';
+    const response = await requestFx({
+      path: '/accesso/auth.params',
+      method: 'POST',
+      body: {
+        state,
+      },
+    });
+    return parseByStatus(name, response, {
+      200: ['ok', oauthSettingsGetOk],
+      401: ['unauthorized', oauthSettingsGetUnauthorized],
+      500: ['internal_server_error', oauthSettingsGetInternalServerError],
+    });
+  },
+});
+//#endregion oauthSettingsGet
+
+/* --- */
+//#region oauthDone
+/* Settings exists */
+export const oauthDoneOk = typed.object({
+  userInfo: typed.object({
+    firstName: typed.string,
+    lastName: typed.string,
+  }),
+});
+export type OAuthDoneGetDone = {
+  status: 'ok';
+  answer: typed.Get<typeof oauthDoneOk>;
+};
+
+/* User not authorized */
+export const oauthDoneUnauthorized = typed.nul;
+
+export type OAuthDoneGetParams = {
+  authorizationCode: string;
+};
+
+/* Something went wrong */
+export const oauthDoneInternalServerError = typed.nul;
+export type OAuthDoneGetFail =
+  | {
+      status: 'unauthorized';
+      error: typed.Get<typeof oauthDoneUnauthorized>;
+    }
+  | {
+      status: 'internal_server_error';
+      error: typed.Get<typeof oauthDoneInternalServerError>;
+    }
+  | GenericErrors;
+
+/* Read session token and show current session. Authenticated checked by session-token cookie */
+export const oauthDone = createEffect<OAuthDoneGetParams, OAuthDoneGetDone, OAuthDoneGetFail>({
+  async handler({ authorizationCode }) {
+    const name = 'oauthDone.body';
+    const response = await requestFx({
+      path: '/accesso/auth.done',
+      method: 'POST',
+      body: {
+        authorizationCode,
+      },
+    });
+    return parseByStatus(name, response, {
+      200: ['ok', oauthDoneOk],
+      401: ['unauthorized', oauthDoneUnauthorized],
+      500: ['internal_server_error', oauthDoneInternalServerError],
+    });
+  },
+});
+//#endregion oauthDone

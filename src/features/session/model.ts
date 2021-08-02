@@ -9,7 +9,7 @@ import {
   sample,
   createEffect,
 } from 'effector';
-import { condition } from 'patronum';
+import { condition, debug } from 'patronum';
 import { historyPush } from '../navigation';
 import { PATHS } from '../../pages/paths';
 import {
@@ -53,7 +53,7 @@ const sessionWaitFx = createEffect<void, SessionGetDone, SessionGetFail>({
 });
 
 $session
-  .on(sessionGet.doneData, (_, { answer }) => answer.user)
+  .on(sessionGet.doneData, (_, { answer }) => answer.userInfo)
   .on(sessionGet.failData, (session, { status }) => {
     if (status === 'unauthorized') {
       return null;

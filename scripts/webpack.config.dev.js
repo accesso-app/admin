@@ -18,5 +18,6 @@ module.exports = merge(baseConfig, {
     historyApiFallback: true,
     contentBase: path.resolve('public/static'),
     publicPath: '/',
+    disableHostCheck: true,
   },
 });

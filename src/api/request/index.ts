@@ -63,15 +63,13 @@ async function requestClient({ path, method, ...params }: Request) {
 
   const query = queryToString(params.query);
   const body =
-    contentIs(headers, 'application/json') && params.body
-      ? JSON.stringify(params.body)
-      : undefined;
+    contentIs(headers, 'application/json') && params.body ? JSON.stringify(params.body) : undefined;
 
   const response = await fetch(`${API_PREFIX}${path}${query}`, {
     method,
     headers,
     body,
-    credentials: 'same-origin',
+    credentials: 'include',
   });
 
   // TODO: rewrite error system
@@ -106,9 +104,7 @@ function contentDefault(headers: Headers, type: string): Headers {
   return headers;
 }
 
-async function getResponseAnswer<Data>(
-  response: Response,
-): Promise<ResponseResult<Data>> {
+async function getResponseAnswer<Data>(response: Response): Promise<ResponseResult<Data>> {
   if (contentIs(response.headers, 'application/json')) {
     return response.json();
   }
