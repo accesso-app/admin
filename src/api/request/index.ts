@@ -1,7 +1,7 @@
 import { attach, createEffect, createEvent, Effect, restore } from 'effector';
 import queryString from 'query-string';
 
-export const API_PREFIX = `http://localhost:9020/api`;
+export const API_PREFIX = `http://accesso.local:9020/api`;
 
 export interface Request {
   path: string;

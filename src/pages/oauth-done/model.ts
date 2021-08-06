@@ -1,5 +1,4 @@
 import { sample } from 'effector';
-import { debug } from 'patronum';
 import { PATHS } from '../paths';
 import { $session } from '../../features/session';
 import { oauthDone } from '../../api';

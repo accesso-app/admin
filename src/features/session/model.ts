@@ -9,7 +9,7 @@ import {
   sample,
   createEffect,
 } from 'effector';
-import { condition, debug } from 'patronum';
+import { condition } from 'patronum';
 import { historyPush } from '../navigation';
 import { PATHS } from '../../pages/paths';
 import {
