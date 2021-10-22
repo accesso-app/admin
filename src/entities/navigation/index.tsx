@@ -1,10 +1,20 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { createBrowserHistory } from 'history';
 
 import { paths } from '../../pages/paths';
+import { createEvent } from 'effector';
 
-export const history = createBrowserHistory();
+export interface HistoryChange {
+  pathname: string;
+  hash: string;
+  search: string;
+  action: 'PUSH' | 'POP' | 'REPLACE';
+}
+
+export const historyChanged = createEvent<HistoryChange>();
+
+export const historyPush = createEvent<string>();
+export const historyReplace = createEvent<string>();
 
 export function StackedTemplate({ title, children }: { title: string; children: React.ReactNode }) {
   return (

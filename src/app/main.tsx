@@ -1,17 +1,49 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Router } from 'react-router-dom';
+import { createBrowserApplication } from 'framework';
+import { allSettled, createEvent, fork, forward } from 'effector';
 
 import './main.css';
 
-import { history } from '../entities/navigation';
+import { historyChanged, historyPush, historyReplace } from '../entities/navigation';
 import { Pages } from '../pages';
+import { ROUTES } from '../pages/routes';
+import { Provider } from 'effector-react/scope';
 
-ReactDOM.render(
-  <React.StrictMode>
-    <Router history={history}>
-      <Pages />
-    </Router>
-  </React.StrictMode>,
-  document.getElementById('root'),
-);
+const ready = createEvent();
+
+const app = createBrowserApplication({
+  ready,
+  routes: ROUTES,
+});
+
+forward({
+  from: app.navigation.historyChanged,
+  to: historyChanged,
+});
+
+forward({
+  from: historyPush,
+  to: app.navigation.historyPush,
+});
+
+forward({
+  from: historyReplace,
+  to: app.navigation.historyReplace,
+});
+
+const scope = fork();
+
+allSettled(ready, { scope }).then(() => {
+  ReactDOM.render(
+    <React.StrictMode>
+      <Provider value={scope}>
+        <Router history={app.navigation.history}>
+          <Pages />
+        </Router>
+      </Provider>
+    </React.StrictMode>,
+    document.getElementById('root'),
+  );
+});
