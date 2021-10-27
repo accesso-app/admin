@@ -5,8 +5,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Router } from 'react-router-dom';
 
+import '~/app/main.css';
 import { historyChanged, historyPush, historyReplace } from '~/entities/navigation';
-import '~/main.css';
 import { Pages } from '~/pages';
 import { ROUTES } from '~/pages/routes';
 

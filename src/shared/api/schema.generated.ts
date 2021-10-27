@@ -14,6 +14,12 @@ export interface Scalars {
   Int: number;
   Float: number;
   /**
+   * Implement the DateTime<Utc> scalar
+   *
+   * The input/output is a string in RFC3339 format.
+   */
+  DateTime: string;
+  /**
    * A UUID is a unique 128-bit number, stored as 16 octets. UUIDs are parsed as Strings
    * within GraphQL. UUIDs are used to assign unique identifiers to entities without requiring a central
    * allocating authority.
@@ -35,6 +41,7 @@ export interface ApplicationCreate {
 
 export const scalarsEnumsHash: import('gqty').ScalarsEnumsHash = {
   Boolean: true,
+  DateTime: true,
   Float: true,
   ID: true,
   Int: true,
@@ -42,6 +49,14 @@ export const scalarsEnumsHash: import('gqty').ScalarsEnumsHash = {
   UUID: true,
 };
 export const generatedSchema = {
+  AccessToken: {
+    __typename: { __type: 'String!' },
+    token: { __type: 'String!' },
+    scopes: { __type: '[String!]!' },
+    expiresAt: { __type: 'DateTime!' },
+    registrationId: { __type: 'UUID!' },
+    registration: { __type: 'UserRegistration' },
+  },
   Application: {
     __typename: { __type: 'String!' },
     id: { __type: 'UUID!' },
@@ -49,6 +64,7 @@ export const generatedSchema = {
     redirectUri: { __type: '[String!]!' },
     title: { __type: 'String!' },
     allowedRegistrations: { __type: 'Boolean!' },
+    registrations: { __type: '[UserRegistration!]!' },
   },
   ApplicationCreate: {
     title: { __type: 'String!' },
@@ -65,6 +81,31 @@ export const generatedSchema = {
     allowedRegistrations: { __type: 'Boolean!' },
     secretKey: { __type: 'String!' },
   },
+  RegisterRequest: {
+    __typename: { __type: 'String!' },
+    email: { __type: 'String!' },
+    code: { __type: 'String!' },
+    expiresAt: { __type: 'DateTime!' },
+  },
+  User: {
+    __typename: { __type: 'String!' },
+    id: { __type: 'UUID!' },
+    email: { __type: 'String!' },
+    canonicalEmail: { __type: 'String!' },
+    firstName: { __type: 'String!' },
+    lastName: { __type: 'String!' },
+    registrations: { __type: '[UserRegistration!]!' },
+  },
+  UserRegistration: {
+    __typename: { __type: 'String!' },
+    id: { __type: 'UUID!' },
+    applicationId: { __type: 'UUID!' },
+    createdAt: { __type: 'DateTime!' },
+    userId: { __type: 'UUID!' },
+    user: { __type: 'User' },
+    application: { __type: 'Application' },
+    accessTokens: { __type: '[AccessToken!]!' },
+  },
   mutation: {
     __typename: { __type: 'String!' },
     applicationCreate: { __type: 'ApplicationSecret!', __args: { form: 'ApplicationCreate!' } },
@@ -72,15 +113,31 @@ export const generatedSchema = {
       __type: 'ApplicationSecret',
       __args: { applicationId: 'UUID!' },
     },
+    registerRequestCreate: { __type: 'RegisterRequest!', __args: { email: 'String!' } },
+    registerRequestDeleteAllForEmail: { __type: 'Int!', __args: { email: 'String!' } },
   },
   query: {
     __typename: { __type: 'String!' },
     version: { __type: 'String!' },
+    accessTokens: { __type: '[AccessToken!]!' },
     application: { __type: 'Application', __args: { id: 'UUID!' } },
     applications: { __type: '[Application!]!' },
+    registerRequests: { __type: '[RegisterRequest!]!' },
+    users: { __type: '[User!]!' },
+    userByEmail: { __type: 'User', __args: { email: 'String!' } },
+    userById: { __type: 'User', __args: { userId: 'UUID!' } },
   },
   subscription: {},
 } as const;
+
+export interface AccessToken {
+  __typename?: 'AccessToken';
+  token: ScalarsEnums['String'];
+  scopes: Array<ScalarsEnums['String']>;
+  expiresAt: ScalarsEnums['DateTime'];
+  registrationId: ScalarsEnums['UUID'];
+  registration?: Maybe<UserRegistration>;
+}
 
 export interface Application {
   __typename?: 'Application';
@@ -89,6 +146,7 @@ export interface Application {
   redirectUri: Array<ScalarsEnums['String']>;
   title: ScalarsEnums['String'];
   allowedRegistrations: ScalarsEnums['Boolean'];
+  registrations: Array<UserRegistration>;
 }
 
 export interface ApplicationSecret {
@@ -104,19 +162,57 @@ export interface ApplicationSecret {
   secretKey: ScalarsEnums['String'];
 }
 
+export interface RegisterRequest {
+  __typename?: 'RegisterRequest';
+  email: ScalarsEnums['String'];
+  code: ScalarsEnums['String'];
+  expiresAt: ScalarsEnums['DateTime'];
+}
+
+export interface User {
+  __typename?: 'User';
+  id: ScalarsEnums['UUID'];
+  email: ScalarsEnums['String'];
+  canonicalEmail: ScalarsEnums['String'];
+  firstName: ScalarsEnums['String'];
+  lastName: ScalarsEnums['String'];
+  registrations: Array<UserRegistration>;
+}
+
+export interface UserRegistration {
+  __typename?: 'UserRegistration';
+  id: ScalarsEnums['UUID'];
+  /**
+   * Field renamed from `client_id`
+   */
+  applicationId: ScalarsEnums['UUID'];
+  createdAt: ScalarsEnums['DateTime'];
+  userId: ScalarsEnums['UUID'];
+  user?: Maybe<User>;
+  application?: Maybe<Application>;
+  accessTokens: Array<AccessToken>;
+}
+
 export interface Mutation {
   __typename?: 'Mutation';
   applicationCreate: (args: { form: ApplicationCreate }) => ApplicationSecret;
   applicationRegenerateSecret: (args: {
     applicationId: Scalars['UUID'];
   }) => Maybe<ApplicationSecret>;
+  registerRequestCreate: (args: { email: Scalars['String'] }) => RegisterRequest;
+  registerRequestDeleteAllForEmail: (args: { email: Scalars['String'] }) => ScalarsEnums['Int'];
 }
 
 export interface Query {
   __typename?: 'Query';
   version: ScalarsEnums['String'];
+  accessTokens: Array<AccessToken>;
   application: (args: { id: Scalars['UUID'] }) => Maybe<Application>;
   applications: Array<Application>;
+  registerRequests: Array<RegisterRequest>;
+  users: Array<User>;
+  userByEmail: (args: { email: Scalars['String'] }) => Maybe<User>;
+  userById: (args: { userId: Scalars['UUID'] }) => Maybe<User>;
 }
 
 export interface Subscription {
@@ -124,18 +220,26 @@ export interface Subscription {
 }
 
 export interface SchemaObjectTypes {
+  AccessToken: AccessToken;
   Application: Application;
   ApplicationSecret: ApplicationSecret;
   Mutation: Mutation;
   Query: Query;
+  RegisterRequest: RegisterRequest;
   Subscription: Subscription;
+  User: User;
+  UserRegistration: UserRegistration;
 }
 export type SchemaObjectTypesNames =
+  | 'AccessToken'
   | 'Application'
   | 'ApplicationSecret'
   | 'Mutation'
   | 'Query'
-  | 'Subscription';
+  | 'RegisterRequest'
+  | 'Subscription'
+  | 'User'
+  | 'UserRegistration';
 
 export interface GeneratedSchema {
   query: Query;
