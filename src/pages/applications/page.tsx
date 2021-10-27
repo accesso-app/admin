@@ -10,12 +10,10 @@ import { Column, ColumnHead, Row, Table, TableBody, TableHead } from '~/shared/u
 
 export const $applications = createStore<Application[]>([]);
 
-function Tag({ enabled }: { enabled: boolean }) {
-  const yes = 'bg-blue-100 text-blue-800';
-  const no = 'bg-red-100 text-red-800';
-  const cls = enabled ? yes : no;
-  const text = enabled ? 'Yes' : 'No';
-
+function Tag({ text, color }: { text: string; color: 'red' | 'blue' }) {
+  const blue = 'bg-blue-100 text-blue-800';
+  const red = 'bg-red-100 text-red-800';
+  const cls = color === 'red' ? red : blue;
   return (
     <span className={'px-2 inline-flex text-xs leading-5 font-semibold rounded-full ' + cls}>
       {text}
@@ -39,30 +37,41 @@ function CreateApplication() {
 function App({ app }: { app: Application }) {
   return (
     <Row>
-      <ColumnHead>
-        <span className="font-mono">{app.id}</span>
-      </ColumnHead>
       <Column>
-        <span className="text-sm text-gray-800 font-medium">{app.title}</span>
+        <span className="font-mono text-xs">{app.id}</span>
       </Column>
-      <Column>
-        <Tag enabled={app.isDev ?? false} />
+      <Column className="">
+        <Link
+          to={paths.applicationsView(app.id)}
+          title="View application"
+          className="px-4 -ml-4 py-2 whitespace-nowrap text-right text-sm font-medium text-indigo-600
+          hover:text-indigo-900 hover:bg-indigo-50 border-transparent border rounded-md"
+        >
+          {app.title}
+        </Link>
       </Column>
-      <Column>
-        <Tag enabled={app.allowedRegistrations ?? false} />
+      <Column className="space-y-1 flex flex-col items-start">
+        {app.isDev ? <Tag text="DEV Mode" color="red" /> : null}
+        {app.allowedRegistrations ? (
+          <Tag text="register allowed" color="blue" />
+        ) : (
+          <Tag text="register prohibited" color="red" />
+        )}
       </Column>
       <Column className="text-right">
         <Link
-          to={paths.applications()}
-          className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium text-indigo-600 hover:text-indigo-900"
-        >
-          Open
-        </Link>
-        <Link
-          to={paths.applications()}
-          className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium text-indigo-600 hover:text-indigo-900"
+          to={paths.applicationsEdit(app.id)}
+          className="px-4 py-2 whitespace-nowrap text-right text-sm font-medium text-indigo-600
+          hover:text-indigo-900 hover:bg-indigo-50 border-transparent border rounded-md"
         >
           Edit
+        </Link>
+        <Link
+          to={paths.applicationsRegistrations(app.id)}
+          className="px-4 py-2 whitespace-nowrap text-right text-sm font-medium text-indigo-600
+          hover:text-indigo-900 hover:bg-indigo-50 border-transparent border rounded-md"
+        >
+          Registrations
         </Link>
       </Column>
     </Row>
@@ -78,8 +87,7 @@ export function ApplicationsPage() {
           <TableHead>
             <ColumnHead>ID</ColumnHead>
             <ColumnHead>Application name</ColumnHead>
-            <ColumnHead>Is DEV</ColumnHead>
-            <ColumnHead>Register allowed</ColumnHead>
+            <ColumnHead>Flags</ColumnHead>
             <ColumnHead>
               <span className="sr-only">Actions</span>
             </ColumnHead>
