@@ -4,11 +4,11 @@ import { Router } from 'react-router-dom';
 import { createBrowserApplication } from 'framework';
 import { allSettled, createEvent, fork, forward } from 'effector';
 
-import './main.css';
+import '~/main.css';
 
-import { historyChanged, historyPush, historyReplace } from '../entities/navigation';
-import { Pages } from '../pages';
-import { ROUTES } from '../pages/routes';
+import { historyChanged, historyPush, historyReplace } from '~/entities/navigation';
+import { Pages } from '~/pages';
+import { ROUTES } from '~/pages/routes';
 import { Provider } from 'effector-react/scope';
 
 const ready = createEvent();

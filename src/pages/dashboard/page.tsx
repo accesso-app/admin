@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavigationTemplate, StackedTemplate } from '../../entities/navigation';
+import { NavigationTemplate, StackedTemplate } from '~/entities/navigation';
 
 export function DashboardPage() {
   return (

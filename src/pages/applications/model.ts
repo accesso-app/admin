@@ -1,13 +1,13 @@
 import { createEffect, restore, sample } from 'effector';
 import { createHatch } from 'framework';
-import { query, resolved } from '../../shared/api';
+import { query, resolved } from '~/shared/api';
 
 export const hatch = createHatch();
 
 /** What if
  *
  * @example
- * import { createQuery } from '../../shared/api'
+ * import { createQuery } from '~/shared/api'
  * const loadFx = createQuery({
  *   applications: {
  *     id: "appId",

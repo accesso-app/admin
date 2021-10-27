@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRightIcon } from '@heroicons/react/solid';
-import { NavigationTemplate } from '../../entities/navigation';
-import { paths } from '../paths';
+import { NavigationTemplate } from '~/entities/navigation';
+import { paths } from '~/pages/paths';
 
 export function NotFoundPage() {
   return (
