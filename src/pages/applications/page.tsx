@@ -1,11 +1,12 @@
-import { Link } from 'react-router-dom';
+import { createStore } from 'effector';
+import { useStore } from 'effector-react/scope';
 import React from 'react';
-import { Column, ColumnHead, Row, Table, TableBody, TableHead } from '~/shared/ui';
+import { Link } from 'react-router-dom';
+
 import { NavigationTemplate, StackedTemplate } from '~/entities/navigation';
 import { paths } from '~/pages/paths';
-import { createStore } from 'effector';
 import { Application } from '~/shared/api';
-import { useStore } from 'effector-react/scope';
+import { Column, ColumnHead, Row, Table, TableBody, TableHead } from '~/shared/ui';
 
 export const $applications = createStore<Application[]>([]);
 

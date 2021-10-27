@@ -1,10 +1,9 @@
 import { RouteConfig } from 'react-router-config';
 
-import { paths } from './paths';
-
 import { ApplicationsPage } from './applications';
 import { DashboardPage } from './dashboard';
 import { NotFoundPage } from './not-found';
+import { paths } from './paths';
 
 export const ROUTES: RouteConfig[] = [
   {

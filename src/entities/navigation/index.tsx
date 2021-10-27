@@ -1,8 +1,8 @@
+import { createEvent } from 'effector';
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
-import { paths } from '../../pages/paths';
-import { createEvent } from 'effector';
+import { paths } from '~/pages/paths';
 
 export interface HistoryChange {
   pathname: string;

@@ -1,11 +1,11 @@
 /**
  * GQTY: You can safely modify this file and Query Fetcher based on your needs
  */
+import type { QueryFetcher } from 'gqty';
+import { createClient } from 'gqty';
 
 import { createReactClient } from '@gqty/react';
 
-import type { QueryFetcher } from 'gqty';
-import { createClient } from 'gqty';
 import type {
   GeneratedSchema,
   SchemaObjectTypes,
