@@ -29,7 +29,7 @@ export interface Scalars {
    * * [Wikipedia: Universally Unique Identifier](http://en.wikipedia.org/wiki/Universally_unique_identifier)
    * * [RFC4122: A Universally Unique IDentifier (UUID) URN Namespace](http://tools.ietf.org/html/rfc4122)
    */
-  UUID: any;
+  UUID: string;
 }
 
 export interface ApplicationCreate {

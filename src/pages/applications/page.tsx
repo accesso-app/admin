@@ -1,5 +1,5 @@
 import { createStore } from 'effector';
-import { useStore } from 'effector-react/scope';
+import { useList } from 'effector-react/scope';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -23,9 +23,25 @@ function Tag({ enabled }: { enabled: boolean }) {
   );
 }
 
+function CreateApplication() {
+  return (
+    <Link
+      to={paths.applicationsNew()}
+      className="inline-flex items-center px-4 py-2 border border-transparent rounded-md
+      text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-800
+      focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+    >
+      Create new
+    </Link>
+  );
+}
+
 function App({ app }: { app: Application }) {
   return (
     <Row>
+      <ColumnHead>
+        <span className="font-mono">{app.id}</span>
+      </ColumnHead>
       <Column>
         <span className="text-sm text-gray-800 font-medium">{app.title}</span>
       </Column>
@@ -54,13 +70,13 @@ function App({ app }: { app: Application }) {
 }
 
 export function ApplicationsPage() {
-  // const list = useList($applications, (app) => <App app={app} />);
-  const list = useStore($applications);
+  const list = useList($applications, (app) => <App app={app} />);
   return (
     <NavigationTemplate>
-      <StackedTemplate title="Applications">
+      <StackedTemplate title="Applications" extras={<CreateApplication />}>
         <Table>
           <TableHead>
+            <ColumnHead>ID</ColumnHead>
             <ColumnHead>Application name</ColumnHead>
             <ColumnHead>Is DEV</ColumnHead>
             <ColumnHead>Register allowed</ColumnHead>
@@ -68,11 +84,7 @@ export function ApplicationsPage() {
               <span className="sr-only">Actions</span>
             </ColumnHead>
           </TableHead>
-          <TableBody>
-            {list.map((item, k) => (
-              <App key={k} app={item} />
-            ))}
-          </TableBody>
+          <TableBody>{list}</TableBody>
         </Table>
       </StackedTemplate>
     </NavigationTemplate>

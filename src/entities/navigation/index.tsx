@@ -16,10 +16,18 @@ export const historyChanged = createEvent<HistoryChange>();
 export const historyPush = createEvent<string>();
 export const historyReplace = createEvent<string>();
 
-export function StackedTemplate({ title, children }: { title: string; children: React.ReactNode }) {
+export function StackedTemplate({
+  title,
+  children,
+  extras,
+}: {
+  title: string;
+  children: React.ReactNode;
+  extras?: React.ReactNode;
+}) {
   return (
     <>
-      <Heading title={title} />
+      <Heading title={title} extras={extras} />
       <main>
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">{children}</div>
       </main>
@@ -69,11 +77,12 @@ function Navigation() {
   );
 }
 
-function Heading({ title }: { title: string }) {
+function Heading({ title, extras }: { title: string; extras?: React.ReactNode }) {
   return (
     <header className="bg-white shadow">
-      <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        <h1 className="text-3xl font-bold text-gray-900">{title}</h1>
+      <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 lg:flex lg:items-center lg:justify-between">
+        <h1 className="text-3xl font-bold text-gray-900 min-w-0 flex-1">{title}</h1>
+        {extras ? <div className="flex mt-4 lg:mt-0 lg:ml-4">{extras}</div> : null}
       </div>
     </header>
   );

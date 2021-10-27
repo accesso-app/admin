@@ -1,5 +1,7 @@
 import { RouteConfig } from 'react-router-config';
 
+import { ApplicationsNewPage } from '~/pages/applications-new';
+
 import { ApplicationsPage } from './applications';
 import { DashboardPage } from './dashboard';
 import { NotFoundPage } from './not-found';
@@ -14,6 +16,11 @@ export const ROUTES: RouteConfig[] = [
   {
     path: paths.applications(),
     component: ApplicationsPage,
+    exact: true,
+  },
+  {
+    path: paths.applicationsNew(),
+    component: ApplicationsNewPage,
     exact: true,
   },
   {
