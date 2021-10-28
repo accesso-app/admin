@@ -3,6 +3,7 @@ import { createEvent, createStore } from 'effector';
 import { useEvent, useList, useStore } from 'effector-react/scope';
 import React from 'react';
 
+import { UserAddIcon } from '@heroicons/react/outline';
 import {
   CheckIcon,
   ExclamationCircleIcon,
@@ -22,6 +23,7 @@ export const $registerRequests = createStore<LocalRegisterRequest[]>([]);
 
 export const emailForNewRequestChanged = createEvent<string>();
 export const createRegistrationRequestClicked = createEvent();
+export const registrationRequestDeleteClicked = createEvent<{ code: string }>();
 
 export const RegistationRequestsPage = () => {
   return (
@@ -125,14 +127,32 @@ function InputSearch(props: React.HTMLProps<HTMLInputElement>) {
   return <InputWhite {...props} value={value} onChange={onChange} />;
 }
 
+const $isEmpty = $registerRequests.map((list) => list.length === 0);
+
 function RegistrationRequestsList() {
+  const isEmpty = useStore($isEmpty);
   const list = useList($registerRequests, (request) => <RegistrationRequest request={request} />);
+
+  if (isEmpty) {
+    return (
+      <div className="flex flex-col mt-6 justify-center items-center h-40 border-dashed border-2 border-gray-300 rounded-lg bg-white">
+        <UserAddIcon className="w-8 h-8 text-gray-500" />
+        <span className="text-sm text-gray-800 mt-3">
+          Fill form to generate registration request
+        </span>
+      </div>
+    );
+  }
+
   return (
     <Table className="mt-6">
       <TableHead>
         <ColumnHead>Email</ColumnHead>
         <ColumnHead>Code</ColumnHead>
         <ColumnHead>Expiration</ColumnHead>
+        <ColumnHead>
+          <span className="sr-only">Actions</span>
+        </ColumnHead>
       </TableHead>
       <TableBody>{list}</TableBody>
     </Table>
@@ -142,6 +162,17 @@ function RegistrationRequestsList() {
 function RegistrationRequest({ request }: { request: LocalRegisterRequest }) {
   const date = React.useMemo(() => dayjs(request.expiresAt), [request.expiresAt]);
   const isExpired = dayjs().isAfter(date);
+
+  const [deleting, toggleDelete] = React.useReducer((is) => !is, false);
+  const deleteClicked = useEvent(registrationRequestDeleteClicked);
+  const onDelete = React.useCallback(
+    () => deleteClicked({ code: request.code! }),
+    [request.code, deleteClicked],
+  );
+  React.useEffect(() => {
+    if (deleting) toggleDelete();
+  }, [request.code]);
+
   return (
     <Row className={request.new ? 'bg-yellow-50' : ''}>
       <Column>
@@ -155,6 +186,34 @@ function RegistrationRequest({ request }: { request: LocalRegisterRequest }) {
           <Tag text="Expired" title={date.format('HH:mm DD.MM.YYYY')} color="red" />
         ) : (
           <Tag text="Valid" title={date.format('HH:mm DD.MM.YYYY')} color="blue" />
+        )}
+      </Column>
+      <Column className="text-right">
+        {deleting ? (
+          <>
+            <button
+              className="px-4 py-2 whitespace-nowrap text-right text-sm font-medium text-red-600
+          hover:text-white hover:bg-red-600 border-transparent border rounded-md"
+              onClick={onDelete}
+            >
+              Yes
+            </button>
+            <button
+              className="px-4 py-2 whitespace-nowrap text-right text-sm font-medium text-gray-600
+          hover:text-gray-900 hover:bg-gray-200 border-transparent border rounded-md"
+              onClick={toggleDelete}
+            >
+              No, undo
+            </button>
+          </>
+        ) : (
+          <button
+            className="px-4 py-2 whitespace-nowrap text-right text-sm font-medium text-red-600
+          hover:text-red-900 hover:bg-red-50 border-transparent border rounded-md"
+            onClick={toggleDelete}
+          >
+            Delete
+          </button>
         )}
       </Column>
     </Row>

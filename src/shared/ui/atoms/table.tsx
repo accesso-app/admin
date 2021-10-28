@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React from 'react';
 
 export function Table({
   children,
@@ -8,8 +8,8 @@ export function Table({
   className?: string;
 }) {
   return (
-    <div className={`${className} shadow border-b border-gray-200 sm:rounded-lg`}>
-      <table className="min-w-full divide-y divide-gray-200">{children}</table>
+    <div className={`${className} shadow border-b border-gray-200 rounded-md sm:rounded-lg`}>
+      <table className="min-w-full divide-y divide-gray-200 rounded-md">{children}</table>
     </div>
   );
 }

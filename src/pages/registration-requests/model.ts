@@ -13,6 +13,7 @@ export const $registerRequests = createStore<LocalRegisterRequest[]>([]);
 
 export const emailForNewRequestChanged = createEvent<string>();
 export const createRegistrationRequestClicked = createEvent();
+export const registrationRequestDeleteClicked = createEvent<{ code: string }>();
 
 const validateRequestEmailFx = createEffect<string, string, string>((email) => {
   if (email.match(/\w+@\w+/gim)) {
@@ -41,6 +42,13 @@ const loadRequestsFx = createEffect(() =>
           } as LocalRegisterRequest),
       )
       .reverse();
+  }),
+);
+
+const registerRequestDeleteFx = createEffect((params: { code: string }) =>
+  resolved(() => {
+    const req = mutation.registerRequestDelete(params);
+    return req?.email;
   }),
 );
 
@@ -86,3 +94,12 @@ $registerRequests.on(registrationRequestCreateFx.doneData, (list, request) => [r
 $newRequestStatus.on(validateRequestEmailFx.fail, () => 'invalid');
 
 $newRequestStatus.on(registrationRequestCreateFx.fail, () => 'error');
+
+sample({
+  clock: registrationRequestDeleteClicked,
+  target: registerRequestDeleteFx,
+});
+
+$registerRequests.on(registerRequestDeleteFx.done, (list, { params }) =>
+  list.filter((item) => item.code !== params.code),
+);
