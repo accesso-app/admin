@@ -63,6 +63,7 @@ function Navigation() {
                 <MenuItem label="Dashboard" to={paths.dashboard()} exact />
                 <MenuItem label="Applications" to={paths.applications()} />
                 <MenuItem label="Users" to={paths.users()} />
+                <MenuItem label="Registration Requests" to={paths.registrationRequests()} />
               </div>
             </div>
           </div>

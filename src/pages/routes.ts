@@ -1,10 +1,11 @@
 import { RouteConfig } from 'react-router-config';
 
+import { ApplicationsPage } from '~/pages/applications';
 import { ApplicationsNewPage } from '~/pages/applications-new';
+import { DashboardPage } from '~/pages/dashboard';
+import { NotFoundPage } from '~/pages/not-found';
+import { RegistrationRequestsPage } from '~/pages/registration-requests';
 
-import { ApplicationsPage } from './applications';
-import { DashboardPage } from './dashboard';
-import { NotFoundPage } from './not-found';
 import { paths } from './paths';
 
 export const ROUTES: RouteConfig[] = [
@@ -21,6 +22,11 @@ export const ROUTES: RouteConfig[] = [
   {
     path: paths.applicationsNew(),
     component: ApplicationsNewPage,
+    exact: true,
+  },
+  {
+    path: paths.registrationRequests(),
+    component: RegistrationRequestsPage,
     exact: true,
   },
   {

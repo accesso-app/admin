@@ -115,6 +115,7 @@ export const generatedSchema = {
     },
     registerRequestCreate: { __type: 'RegisterRequest!', __args: { email: 'String!' } },
     registerRequestDeleteAllForEmail: { __type: 'Int!', __args: { email: 'String!' } },
+    registerRequestDelete: { __type: 'RegisterRequest', __args: { code: 'String!' } },
   },
   query: {
     __typename: { __type: 'String!' },
@@ -123,6 +124,14 @@ export const generatedSchema = {
     application: { __type: 'Application', __args: { id: 'UUID!' } },
     applications: { __type: '[Application!]!' },
     registerRequests: { __type: '[RegisterRequest!]!' },
+    registerRequestsByEmail: {
+      __type: '[RegisterRequest!]!',
+      __args: { email: 'String!', count: 'Int!' },
+    },
+    registerRequestsSearch: {
+      __type: '[RegisterRequest!]!',
+      __args: { query: 'String!', count: 'Int!' },
+    },
     users: { __type: '[User!]!' },
     userByEmail: { __type: 'User', __args: { email: 'String!' } },
     userById: { __type: 'User', __args: { userId: 'UUID!' } },
@@ -201,6 +210,7 @@ export interface Mutation {
   }) => Maybe<ApplicationSecret>;
   registerRequestCreate: (args: { email: Scalars['String'] }) => RegisterRequest;
   registerRequestDeleteAllForEmail: (args: { email: Scalars['String'] }) => ScalarsEnums['Int'];
+  registerRequestDelete: (args: { code: Scalars['String'] }) => Maybe<RegisterRequest>;
 }
 
 export interface Query {
@@ -210,6 +220,20 @@ export interface Query {
   application: (args: { id: Scalars['UUID'] }) => Maybe<Application>;
   applications: Array<Application>;
   registerRequests: Array<RegisterRequest>;
+  registerRequestsByEmail: (args: {
+    email: Scalars['String'];
+    /**
+     * @defaultValue `100`
+     */
+    count: Scalars['Int'];
+  }) => Array<RegisterRequest>;
+  registerRequestsSearch: (args: {
+    query: Scalars['String'];
+    /**
+     * @defaultValue `100`
+     */
+    count: Scalars['Int'];
+  }) => Array<RegisterRequest>;
   users: Array<User>;
   userByEmail: (args: { email: Scalars['String'] }) => Maybe<User>;
   userById: (args: { userId: Scalars['UUID'] }) => Maybe<User>;

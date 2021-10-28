@@ -1,9 +1,10 @@
 export const paths = {
-  dashboard: () => '/',
   applications: () => '/applications',
-  applicationsNew: () => '/applications/new',
-  applicationsView: (appId = ':applicationId') => `/applications/${appId}`,
   applicationsEdit: (appId = ':applicationId') => `/applications/${appId}/edit`,
+  applicationsNew: () => '/applications/new',
   applicationsRegistrations: (appId = ':applicationId') => `/applications/${appId}/registrations`,
+  applicationsView: (appId = ':applicationId') => `/applications/${appId}`,
+  dashboard: () => '/',
+  registrationRequests: () => '/registration-requests',
   users: () => '/users',
 };
