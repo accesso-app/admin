@@ -35,19 +35,22 @@ function App({ app }: { app: Application }) {
   return (
     <Row>
       <Column>
-        <span className="font-mono text-xs">{app.id}</span>
+        <span className="lg:hidden pr-2 select-none">ID:</span>
+        <pre className="font-mono text-sm lg:text-xs inline">{app.id}</pre>
       </Column>
       <Column className="">
+        <span className="lg:hidden pr-2">Application name:</span>
         <Link
           to={paths.applicationsView(app.id)}
           title="View application"
-          className="px-4 -ml-4 py-2 whitespace-nowrap text-right text-sm font-medium text-indigo-600
+          className="px-4 lg:-ml-4 py-2 whitespace-nowrap text-right text-md lg:text-sm font-medium text-indigo-600
           hover:text-indigo-900 hover:bg-indigo-50 border-transparent border rounded-md"
         >
           {app.title}
         </Link>
       </Column>
-      <Column className="space-y-1 flex flex-col items-start">
+      <Column className="space-x-1 lg:space-y-1 flex lg:flex-col items-center lg:items-start">
+        <span className="lg:hidden pr-2">Flags:</span>
         {app.isDev ? <Tag text="DEV Mode" color="red" /> : null}
         {app.allowedRegistrations ? (
           <Tag text="register allowed" color="blue" />
@@ -56,16 +59,17 @@ function App({ app }: { app: Application }) {
         )}
       </Column>
       <Column className="text-right">
+        <span className="lg:hidden pr-2">Actions:</span>
         <Link
           to={paths.applicationsEdit(app.id)}
-          className="px-4 py-2 whitespace-nowrap text-right text-sm font-medium text-indigo-600
+          className="px-4 py-2 whitespace-nowrap text-right text-md lg:text-sm font-medium text-indigo-600
           hover:text-indigo-900 hover:bg-indigo-50 border-transparent border rounded-md"
         >
           Edit
         </Link>
         <Link
           to={paths.applicationsRegistrations(app.id)}
-          className="px-4 py-2 whitespace-nowrap text-right text-sm font-medium text-indigo-600
+          className="px-4 py-2 whitespace-nowrap text-right text-md lg:text-sm font-medium text-indigo-600
           hover:text-indigo-900 hover:bg-indigo-50 border-transparent border rounded-md"
         >
           Registrations

@@ -41,7 +41,7 @@ function NewRegistrationRequest() {
   const onCreate = useEvent(createRegistrationRequestClicked);
   return (
     <Banner className="flex-col space-y-3 items-start md:flex-row md:space-y-0">
-      <div className="flex items-center flex-1">
+      <div className="flex items-center flex-1 self-start lg:self-auto">
         <span className="p-2 rounded-lg bg-indigo-800">
           <PlusIcon className="h-6 w-6" />
         </span>
@@ -62,7 +62,7 @@ function NewRegistrationRequest() {
         )}
       </div>
       <form
-        className="flex items-center"
+        className="flex items-center self-end lg:self-auto"
         aria-disabled={status === 'pending'}
         onSubmit={(event) => {
           event.preventDefault();
@@ -93,7 +93,7 @@ function NewRegistrationRequest() {
 function Banner({ children, className = '' }: { children: React.ReactNode; className?: string }) {
   return (
     <div
-      className={`${className} bg-indigo-600 text-white py-3 px-3 rounded-lg shadow-md flex items-center`}
+      className={`${className} bg-indigo-600 text-white py-3 px-3 sm:rounded-lg shadow-md flex items-center`}
     >
       {children}
     </div>
@@ -176,12 +176,15 @@ function RegistrationRequest({ request }: { request: LocalRegisterRequest }) {
   return (
     <Row className={request.new ? 'bg-yellow-50' : ''}>
       <Column>
-        <span className="font-mono">{request.email}</span>
+        <span className="lg:hidden pr-2 select-none">Email:</span>
+        <pre className="font-mono inline">{request.email}</pre>
       </Column>
       <Column>
-        <span className="font-mono">{request.code}</span>
+        <span className="lg:hidden pr-2 select-none">Code:</span>
+        <pre className="font-mono inline">{request.code}</pre>
       </Column>
       <Column>
+        <span className="lg:hidden pr-2">Expiration:</span>
         {isExpired ? (
           <Tag text="Expired" title={date.format('HH:mm DD.MM.YYYY')} color="red" />
         ) : (
@@ -189,17 +192,18 @@ function RegistrationRequest({ request }: { request: LocalRegisterRequest }) {
         )}
       </Column>
       <Column className="text-right">
+        <span className="lg:hidden pr-2">Actions:</span>
         {deleting ? (
           <>
             <button
-              className="px-4 py-2 whitespace-nowrap text-right text-sm font-medium text-red-600
+              className="px-4 py-2 whitespace-nowrap text-right text-md lg:text-sm font-medium text-red-600
           hover:text-white hover:bg-red-600 border-transparent border rounded-md"
               onClick={onDelete}
             >
               Yes
             </button>
             <button
-              className="px-4 py-2 whitespace-nowrap text-right text-sm font-medium text-gray-600
+              className="px-4 py-2 whitespace-nowrap text-right text-md lg:text-sm font-medium text-gray-600
           hover:text-gray-900 hover:bg-gray-200 border-transparent border rounded-md"
               onClick={toggleDelete}
             >
@@ -208,7 +212,7 @@ function RegistrationRequest({ request }: { request: LocalRegisterRequest }) {
           </>
         ) : (
           <button
-            className="px-4 py-2 whitespace-nowrap text-right text-sm font-medium text-red-600
+            className="px-4 py-2 whitespace-nowrap text-right text-md lg:text-sm font-medium text-red-600
           hover:text-red-900 hover:bg-red-50 border-transparent border rounded-md"
             onClick={toggleDelete}
           >
