@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { NavigationTemplate, StackedTemplate } from '~/entities/navigation';
 import { paths } from '~/pages/paths';
 import { Application } from '~/shared/api';
-import { Column, ColumnHead, Row, Table, TableBody, TableHead } from '~/shared/ui';
+import { Column, ColumnHead, Row, Table, TableBody, TableHead, Tag } from '~/shared/ui';
 
 export const $applications = createStore<Application[]>([]);
 
@@ -72,17 +72,6 @@ function App({ app }: { app: Application }) {
         </Link>
       </Column>
     </Row>
-  );
-}
-
-function Tag({ text, color }: { text: string; color: 'red' | 'blue' }) {
-  const blue = 'bg-blue-100 text-blue-800';
-  const red = 'bg-red-100 text-red-800';
-  const cls = color === 'red' ? red : blue;
-  return (
-    <span className={'px-2 inline-flex text-xs leading-5 font-semibold rounded-full ' + cls}>
-      {text}
-    </span>
   );
 }
 

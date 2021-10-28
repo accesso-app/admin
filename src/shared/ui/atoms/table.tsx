@@ -1,8 +1,14 @@
 import React, { ReactNode } from 'react';
 
-export function Table({ children }: { children: React.ReactNode }) {
+export function Table({
+  children,
+  className = '',
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
-    <div className="shadow border-b border-gray-200 sm:rounded-lg">
+    <div className={`${className} shadow border-b border-gray-200 sm:rounded-lg`}>
       <table className="min-w-full divide-y divide-gray-200">{children}</table>
     </div>
   );
@@ -41,6 +47,12 @@ export function TableBody({ children }: { children: React.ReactNode }) {
   return <tbody className="bg-white divide-y divide-gray-200">{children}</tbody>;
 }
 
-export function Row({ children }: { children: ReactNode }) {
-  return <tr className="bg-white hover:bg-gray-50">{children}</tr>;
+export function Row({
+  children,
+  className = '',
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return <tr className={`${className} bg-white hover:bg-gray-50`}>{children}</tr>;
 }

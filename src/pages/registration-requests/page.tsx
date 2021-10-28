@@ -1,5 +1,6 @@
+import dayjs from 'dayjs';
 import { createEvent, createStore } from 'effector';
-import { useEvent, useStore } from 'effector-react/scope';
+import { useEvent, useList, useStore } from 'effector-react/scope';
 import React from 'react';
 
 import {
@@ -11,11 +12,13 @@ import {
 } from '@heroicons/react/solid';
 
 import { NavigationTemplate, StackedTemplate } from '~/entities/navigation';
+import { Column, ColumnHead, Row, Table, TableBody, TableHead, Tag } from '~/shared/ui';
 
-import { RequestStatus } from './common';
+import { LocalRegisterRequest, RequestStatus } from './common';
 
 export const $emailForNewRequest = createStore('');
 export const $newRequestStatus = createStore<RequestStatus>('new');
+export const $registerRequests = createStore<LocalRegisterRequest[]>([]);
 
 export const emailForNewRequestChanged = createEvent<string>();
 export const createRegistrationRequestClicked = createEvent();
@@ -25,6 +28,7 @@ export const RegistationRequestsPage = () => {
     <NavigationTemplate>
       <StackedTemplate title="Registration Requests">
         <NewRegistrationRequest />
+        <RegistrationRequestsList />
       </StackedTemplate>
     </NavigationTemplate>
   );
@@ -119,4 +123,40 @@ function InputSearch(props: React.HTMLProps<HTMLInputElement>) {
   const changer = useEvent(emailForNewRequestChanged);
   const onChange = React.useCallback((event) => changer(event.target.value), [changer]);
   return <InputWhite {...props} value={value} onChange={onChange} />;
+}
+
+function RegistrationRequestsList() {
+  const list = useList($registerRequests, (request) => <RegistrationRequest request={request} />);
+  return (
+    <Table className="mt-6">
+      <TableHead>
+        <ColumnHead>Email</ColumnHead>
+        <ColumnHead>Code</ColumnHead>
+        <ColumnHead>Expiration</ColumnHead>
+      </TableHead>
+      <TableBody>{list}</TableBody>
+    </Table>
+  );
+}
+
+function RegistrationRequest({ request }: { request: LocalRegisterRequest }) {
+  const date = React.useMemo(() => dayjs(request.expiresAt), [request.expiresAt]);
+  const isExpired = dayjs().isAfter(date);
+  return (
+    <Row className={request.new ? 'bg-yellow-50' : ''}>
+      <Column>
+        <span className="font-mono">{request.email}</span>
+      </Column>
+      <Column>
+        <span className="font-mono">{request.code}</span>
+      </Column>
+      <Column>
+        {isExpired ? (
+          <Tag text="Expired" title={date.format('HH:mm DD.MM.YYYY')} color="red" />
+        ) : (
+          <Tag text="Valid" title={date.format('HH:mm DD.MM.YYYY')} color="blue" />
+        )}
+      </Column>
+    </Row>
+  );
 }

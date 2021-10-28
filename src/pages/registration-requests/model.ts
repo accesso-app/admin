@@ -2,13 +2,14 @@ import { createEffect, createEvent, createStore, guard, sample } from 'effector'
 import { createHatch } from 'framework';
 import { every } from 'patronum';
 
-import { RequestStatus } from '~/pages/registration-requests/common';
-import { mutation, RegisterRequest, resolved } from '~/shared/api';
+import { LocalRegisterRequest, RequestStatus } from '~/pages/registration-requests/common';
+import { mutation, query, resolved } from '~/shared/api';
 
 export const hatch = createHatch();
 
 export const $emailForNewRequest = createStore('');
 export const $newRequestStatus = createStore<RequestStatus>('new');
+export const $registerRequests = createStore<LocalRegisterRequest[]>([]);
 
 export const emailForNewRequestChanged = createEvent<string>();
 export const createRegistrationRequestClicked = createEvent();
@@ -23,12 +24,33 @@ const validateRequestEmailFx = createEffect<string, string, string>((email) => {
 const registrationRequestCreateFx = createEffect((targetEmail: string) =>
   resolved(() => {
     const { email, code, expiresAt } = mutation.registerRequestCreate({ email: targetEmail });
-    return { email, code, expiresAt } as RegisterRequest;
+    return { email, code, expiresAt, new: true } as LocalRegisterRequest;
+  }),
+);
+
+const loadRequestsFx = createEffect(() =>
+  resolved(() => {
+    return query.registerRequests
+      .map(
+        (request) =>
+          ({
+            code: request.code,
+            email: request.email,
+            expiresAt: request.expiresAt,
+            new: false,
+          } as LocalRegisterRequest),
+      )
+      .reverse();
   }),
 );
 
 $emailForNewRequest.reset(hatch.exit, hatch.enter);
 $newRequestStatus.reset(hatch.exit, hatch.enter);
+// do not reset registerRequests to hide empty page between page changes
+
+sample({ clock: hatch.enter, target: loadRequestsFx });
+
+$registerRequests.on(loadRequestsFx.doneData, (_, list) => list);
 
 $emailForNewRequest.on(emailForNewRequestChanged, (_, email) => email);
 $newRequestStatus.on(emailForNewRequestChanged, () => 'new');
@@ -59,8 +81,7 @@ sample({
 
 $newRequestStatus.on(registrationRequestCreateFx.done, () => 'done');
 $emailForNewRequest.reset(registrationRequestCreateFx.done);
-
-// Add registration request to list and highlight it
+$registerRequests.on(registrationRequestCreateFx.doneData, (list, request) => [request, ...list]);
 
 $newRequestStatus.on(validateRequestEmailFx.fail, () => 'invalid');
 
