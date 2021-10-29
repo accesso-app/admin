@@ -55,11 +55,11 @@ function LogoutButton() {
 function Navigation() {
   return (
     <nav className="bg-gray-800">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <div className="flex items-center">
-            <div className="block">
-              <div className="flex items-baseline space-x-4">
+      <div className="max-w-7xl mx-auto px-0 sm:px-6 lg:px-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between sm:h-16">
+          <div className="flex flex-col sm:items-center sm:flex-row">
+            <div className="flex flex-1 sm:block">
+              <div className="flex flex-1 sm:items-baseline flex-col sm:space-x-4 sm:flex-row">
                 <MenuItem label="Dashboard" to={paths.dashboard()} exact />
                 <MenuItem label="Applications" to={paths.applications()} />
                 <MenuItem label="Users" to={paths.users()} />
@@ -67,7 +67,7 @@ function Navigation() {
               </div>
             </div>
           </div>
-          <div className="block">
+          <div className="block hidden">
             <div className="flex items-baseline">
               <LogoutButton />
             </div>
@@ -94,7 +94,7 @@ function MenuItem({ label, to, exact = false }: { label: string; to: string; exa
     <NavLink
       className={(active) =>
         (active ? 'text-white bg-gray-900' : 'text-gray-300 hover:bg-gray-700 hover:text-white') +
-        ' px-3 py-2 rounded-md text-sm font-medium'
+        ' px-5 py-4 sm:px-3 sm:py-2 sm:rounded-md text-sm font-medium'
       }
       to={to}
       exact={exact}
