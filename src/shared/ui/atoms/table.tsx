@@ -24,11 +24,17 @@ export function TableHead({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function ColumnHead({ children }: { children: React.ReactNode }) {
+export function ColumnHead({
+  children,
+  className = '',
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
     <th
       scope="col"
-      className="lg:px-6 lg:py-3 px-3 py-2 text-left text-xs font-medium text-gray-600 uppercase tracking-wider"
+      className={`${className} lg:px-6 lg:py-3 px-3 py-2 text-left text-xs font-medium text-gray-600 uppercase tracking-wider`}
     >
       {children}
     </th>

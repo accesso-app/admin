@@ -13,7 +13,7 @@ import {
 } from '@heroicons/react/solid';
 
 import { NavigationTemplate, StackedTemplate } from '~/entities/navigation';
-import { Column, ColumnHead, Row, Table, TableBody, TableHead, Tag } from '~/shared/ui';
+import { Column, ColumnHead, EmptyState, Row, Table, TableBody, TableHead, Tag } from '~/shared/ui';
 
 import { LocalRegisterRequest, RequestStatus } from './common';
 
@@ -134,14 +134,7 @@ function RegistrationRequestsList() {
   const list = useList($registerRequests, (request) => <RegistrationRequest request={request} />);
 
   if (isEmpty) {
-    return (
-      <div className="flex flex-col mt-6 justify-center items-center h-40 border-dashed border-2 border-gray-300 rounded-lg bg-white">
-        <UserAddIcon className="w-8 h-8 text-gray-500" />
-        <span className="text-sm text-gray-800 mt-3">
-          Fill form to generate registration request
-        </span>
-      </div>
-    );
+    return <EmptyState icon={UserAddIcon}>Fill form to generate registration request</EmptyState>;
   }
 
   return (

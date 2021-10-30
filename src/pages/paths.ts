@@ -7,4 +7,5 @@ export const paths = {
   dashboard: () => '/',
   registrationRequests: () => '/registration-requests',
   users: () => '/users',
+  usersView: (userId = ':userId') => `/users/${userId}`,
 };
