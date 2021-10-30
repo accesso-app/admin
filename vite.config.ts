@@ -12,7 +12,11 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/api': 'http://localhost:9005/',
+      '/api': {
+        target: 'http://localhost:9005/',
+        changeOrigin: true,
+        rewrite: (path) => path.replace('/api/', '/'),
+      },
     },
   },
 });
