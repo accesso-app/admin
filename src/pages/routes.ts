@@ -6,6 +6,7 @@ import { DashboardPage } from '~/pages/dashboard';
 import { NotFoundPage } from '~/pages/not-found';
 import { RegistrationRequestsPage } from '~/pages/registration-requests';
 import { UsersPage } from '~/pages/users';
+import { UsersViewPage } from '~/pages/users-view';
 
 import { paths } from './paths';
 
@@ -33,6 +34,11 @@ export const ROUTES: RouteConfig[] = [
   {
     path: paths.users(),
     component: UsersPage,
+    exact: true,
+  },
+  {
+    path: paths.usersView(),
+    component: UsersViewPage,
     exact: true,
   },
   {

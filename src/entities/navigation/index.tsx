@@ -21,7 +21,7 @@ export function StackedTemplate({
   children,
   extras,
 }: {
-  title: string;
+  title: React.ReactNode;
   children: React.ReactNode;
   extras?: React.ReactNode;
 }) {
@@ -78,7 +78,7 @@ function Navigation() {
   );
 }
 
-function Heading({ title, extras }: { title: string; extras?: React.ReactNode }) {
+function Heading({ title, extras }: { title: React.ReactNode; extras?: React.ReactNode }) {
   return (
     <header className="bg-white shadow">
       <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 lg:flex lg:items-center lg:justify-between">
