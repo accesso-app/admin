@@ -10,4 +10,9 @@ export default defineConfig({
   resolve: {
     alias: [{ find: '~', replacement: path.resolve('src') }],
   },
+  server: {
+    proxy: {
+      '/api': 'http://localhost:9005/',
+    },
+  },
 });

@@ -14,8 +14,7 @@ import type {
 import { generatedSchema, scalarsEnumsHash } from './schema.generated';
 
 const queryFetcher: QueryFetcher = async function (query, variables) {
-  // Modify "http://localhost:9005/graphql" if needed
-  const response = await fetch('http://localhost:9005/graphql', {
+  const response = await fetch('/api/graphql', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
