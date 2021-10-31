@@ -37,7 +37,7 @@ export const $email = restore(emailChanged, '');
 export const $firstName = restore(firstNameChanged, '');
 export const $lastName = restore(lastNameChanged, '');
 export const $isUserFound = createStore(false);
-export const $userLoading = userLoadFx.pending;
+export const $profileLoading = userLoadFx.pending;
 
 const $userId = hatch.$params.map((params) => params['userId']);
 
