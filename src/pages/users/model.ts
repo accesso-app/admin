@@ -1,7 +1,8 @@
 import { createEffect, createEvent, createStore, sample } from 'effector';
 import { createHatch } from 'framework';
+import { debounce } from 'patronum';
 
-import { query, resolved, User } from '~/shared/api';
+import { query, refetch, resolved, User } from '~/shared/api';
 
 import { LocalUser } from './common';
 
@@ -25,6 +26,10 @@ function mapUser(user: User): LocalUser {
 
 const usersAllFetchFx = createEffect(() => resolved(() => query.users.map(mapUser)));
 
+const usersSearchFx = createEffect((search: string) =>
+  refetch(() => query.usersSearch({ query: search }).map(mapUser)),
+);
+
 sample({
   clock: hatch.enter,
   target: usersAllFetchFx,
@@ -35,3 +40,7 @@ $users.on(usersAllFetchFx.doneData, (_, users) => users);
 $searchQuery
   .on(searchQueryChanged, (_, query) => query)
   .reset(searchQueryReset, hatch.enter, hatch.exit);
+
+debounce({ source: $searchQuery, target: usersSearchFx, timeout: 300 });
+
+$users.on(usersSearchFx.doneData, (_, users) => users);

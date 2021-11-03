@@ -39,6 +39,13 @@ export interface ApplicationCreate {
   allowedRegistrations?: Maybe<Scalars['Boolean']>;
 }
 
+export interface UserEdit {
+  id: Scalars['UUID'];
+  email?: Maybe<Scalars['String']>;
+  firstName?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
+}
+
 export const scalarsEnumsHash: import('gqty').ScalarsEnumsHash = {
   Boolean: true,
   DateTime: true,
@@ -95,6 +102,18 @@ export const generatedSchema = {
     firstName: { __type: 'String!' },
     lastName: { __type: 'String!' },
     registrations: { __type: '[UserRegistration!]!' },
+    accessTokensCount: { __type: 'Int!' },
+  },
+  UserEdit: {
+    id: { __type: 'UUID!' },
+    email: { __type: 'String' },
+    firstName: { __type: 'String' },
+    lastName: { __type: 'String' },
+  },
+  UserPasswordReset: {
+    __typename: { __type: 'String!' },
+    password: { __type: 'String!' },
+    user: { __type: 'User!' },
   },
   UserRegistration: {
     __typename: { __type: 'String!' },
@@ -108,6 +127,7 @@ export const generatedSchema = {
   },
   mutation: {
     __typename: { __type: 'String!' },
+    accessTokensDeleteForUser: { __type: 'Int!', __args: { userId: 'UUID!' } },
     applicationCreate: { __type: 'ApplicationSecret!', __args: { form: 'ApplicationCreate!' } },
     applicationRegenerateSecret: {
       __type: 'ApplicationSecret',
@@ -116,6 +136,8 @@ export const generatedSchema = {
     registerRequestCreate: { __type: 'RegisterRequest!', __args: { email: 'String!' } },
     registerRequestDeleteAllForEmail: { __type: 'Int!', __args: { email: 'String!' } },
     registerRequestDelete: { __type: 'RegisterRequest', __args: { code: 'String!' } },
+    userEdit: { __type: 'User', __args: { user: 'UserEdit!' } },
+    userPasswordReset: { __type: 'UserPasswordReset', __args: { userId: 'UUID!' } },
   },
   query: {
     __typename: { __type: 'String!' },
@@ -135,6 +157,7 @@ export const generatedSchema = {
     users: { __type: '[User!]!' },
     userByEmail: { __type: 'User', __args: { email: 'String!' } },
     userById: { __type: 'User', __args: { userId: 'UUID!' } },
+    usersSearch: { __type: '[User!]!', __args: { query: 'String!' } },
   },
   subscription: {},
 } as const;
@@ -186,6 +209,13 @@ export interface User {
   firstName: ScalarsEnums['String'];
   lastName: ScalarsEnums['String'];
   registrations: Array<UserRegistration>;
+  accessTokensCount: ScalarsEnums['Int'];
+}
+
+export interface UserPasswordReset {
+  __typename?: 'UserPasswordReset';
+  password: ScalarsEnums['String'];
+  user: User;
 }
 
 export interface UserRegistration {
@@ -204,6 +234,7 @@ export interface UserRegistration {
 
 export interface Mutation {
   __typename?: 'Mutation';
+  accessTokensDeleteForUser: (args: { userId: Scalars['UUID'] }) => ScalarsEnums['Int'];
   applicationCreate: (args: { form: ApplicationCreate }) => ApplicationSecret;
   applicationRegenerateSecret: (args: {
     applicationId: Scalars['UUID'];
@@ -211,6 +242,8 @@ export interface Mutation {
   registerRequestCreate: (args: { email: Scalars['String'] }) => RegisterRequest;
   registerRequestDeleteAllForEmail: (args: { email: Scalars['String'] }) => ScalarsEnums['Int'];
   registerRequestDelete: (args: { code: Scalars['String'] }) => Maybe<RegisterRequest>;
+  userEdit: (args: { user: UserEdit }) => Maybe<User>;
+  userPasswordReset: (args: { userId: Scalars['UUID'] }) => Maybe<UserPasswordReset>;
 }
 
 export interface Query {
@@ -237,6 +270,7 @@ export interface Query {
   users: Array<User>;
   userByEmail: (args: { email: Scalars['String'] }) => Maybe<User>;
   userById: (args: { userId: Scalars['UUID'] }) => Maybe<User>;
+  usersSearch: (args: { query: Scalars['String'] }) => Array<User>;
 }
 
 export interface Subscription {
@@ -252,6 +286,7 @@ export interface SchemaObjectTypes {
   RegisterRequest: RegisterRequest;
   Subscription: Subscription;
   User: User;
+  UserPasswordReset: UserPasswordReset;
   UserRegistration: UserRegistration;
 }
 export type SchemaObjectTypesNames =
@@ -263,6 +298,7 @@ export type SchemaObjectTypesNames =
   | 'RegisterRequest'
   | 'Subscription'
   | 'User'
+  | 'UserPasswordReset'
   | 'UserRegistration';
 
 export interface GeneratedSchema {

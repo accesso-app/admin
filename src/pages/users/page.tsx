@@ -29,7 +29,6 @@ export function UsersPage() {
 }
 
 function Search() {
-  return null; // TODO: create graphql `usersSearch({ query })`
   const query = useStore($searchQuery);
   const pending = useStore($searchPending);
   const changeQuery = useEvent(searchQueryChanged);
