@@ -1,29 +1,39 @@
-import { combine, createEffect, createEvent, createStore, guard, restore, sample } from 'effector';
+import { createEffect, createEvent, createStore, guard, restore, sample } from 'effector';
 import { createHatch } from 'framework';
 import { spread } from 'patronum';
 
-import { query, resolved } from '~/shared/api';
+import { mutation, query, resolved, User } from '~/shared/api';
 
 import { LocalUser } from './common';
 
 export const hatch = createHatch();
 
+function mapUser(user: User): LocalUser {
+  return {
+    id: user.id!,
+    email: user.email!,
+    firstName: user.firstName!,
+    lastName: user.lastName!,
+    accessTokensCount: user.accessTokensCount!,
+  };
+}
+
 const userLoadFx = createEffect((userId: string) =>
   resolved(() => {
     const user = query.userById({ userId });
     if (!user) return null;
-    return {
-      id: user.id,
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
-    } as LocalUser;
+    return mapUser(user);
   }),
 );
 
-const userSaveFx = createEffect((user: LocalUser) => {
-  return user;
-});
+type EditUser = { id: string; email: string; firstName: string; lastName: string };
+const userSaveFx = createEffect((user: EditUser) =>
+  resolved(() => {
+    const fetched = mutation.userEdit({ user });
+    if (!fetched) return null;
+    return mapUser(fetched);
+  }),
+);
 
 export const profileSubmitted = createEvent();
 export const emailChanged = createEvent<string>();

@@ -1,8 +1,8 @@
-import { createEffect, createEvent, createStore, sample } from 'effector';
+import { createEffect, createEvent, createStore, forward, sample } from 'effector';
 import { createHatch } from 'framework';
-import { debounce } from 'patronum';
+import { debounce, debug } from 'patronum';
 
-import { query, refetch, resolved, User } from '~/shared/api';
+import { query, resolved, User } from '~/shared/api';
 
 import { LocalUser } from './common';
 
@@ -24,10 +24,12 @@ function mapUser(user: User): LocalUser {
   };
 }
 
-const usersAllFetchFx = createEffect(() => resolved(() => query.users.map(mapUser)));
+const usersAllFetchFx = createEffect(() =>
+  resolved(() => query.users.map(mapUser), { noCache: true }),
+);
 
 const usersSearchFx = createEffect((search: string) =>
-  refetch(() => query.usersSearch({ query: search }).map(mapUser)),
+  resolved(() => query.usersSearch({ query: search }).map(mapUser), { noCache: true }),
 );
 
 sample({
@@ -42,5 +44,7 @@ $searchQuery
   .reset(searchQueryReset, hatch.enter, hatch.exit);
 
 debounce({ source: $searchQuery, target: usersSearchFx, timeout: 300 });
+
+forward({ from: usersSearchFx.pending, to: $searchPending });
 
 $users.on(usersSearchFx.doneData, (_, users) => users);

@@ -100,8 +100,7 @@ function Profile() {
       >
         <Card
           footer={
-            <div className="flex items-center justify-between space-x-3">
-              <Note text="Saving disabled, backend need to be implemented" className="bg-gray-50" />
+            <div className="text-right">
               <ButtonPrimary>Save</ButtonPrimary>
             </div>
           }
@@ -170,6 +169,7 @@ function Actions() {
     >
       <Card className="space-y-5">
         <Note text="This section temporary disabled" />
+
         <div className="flex flex-col items-start space-y-2">
           <h4 className="text-xl">Finish all active sessions</h4>
           <p className="text-gray-500 text-sm pb-2">
@@ -178,11 +178,11 @@ function Actions() {
           <ButtonPrimary>Finish all session tokens</ButtonPrimary>
         </div>
         <div className="flex flex-col items-start space-y-2">
-          <h4 className="text-xl">Delete user account</h4>
+          <h4 className="text-xl">Set a new password</h4>
           <p className="text-gray-500 text-sm pb-2">
-            Deleting account requires to delete all data made by user. Operation is unrecoverable.
+            A new password will be generated for a user. Sessions won't be finished.
           </p>
-          <ButtonPrimary>Sure, I want to delete all user data</ButtonPrimary>
+          <ButtonPrimary>Reset password</ButtonPrimary>
         </div>
       </Card>
     </DescriptionTemplate>

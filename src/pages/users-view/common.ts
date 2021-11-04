@@ -3,4 +3,5 @@ export type LocalUser = {
   email: string;
   firstName: string;
   lastName: string;
+  accessTokensCount: number;
 };
