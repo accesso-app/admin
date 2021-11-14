@@ -12,5 +12,7 @@ module.exports = {
       borderColor: ['disabled'],
     },
   },
-  plugins: [],
+  plugins: [
+    require('postcss-import'),
+  ],
 };
