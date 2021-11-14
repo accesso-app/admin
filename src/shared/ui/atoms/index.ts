@@ -1,5 +1,6 @@
 export * from './button';
 export * from './card';
+export * from './checkbox';
 export * from './empty-state';
 export * from './input-field';
 export * from './note';
