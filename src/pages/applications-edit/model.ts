@@ -87,7 +87,7 @@ function mapApp(app: Application): LocalApp {
   return {
     id: app.id!,
     isDev: app.isDev!,
-    redirectUri: app.redirectUri as Array<string>,
+    redirectUri: app.redirectUri.map((uri) => uri || ''),
     title: app.title!,
     allowedRegistrations: app.allowedRegistrations!,
   };
