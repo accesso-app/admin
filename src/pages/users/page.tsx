@@ -1,5 +1,5 @@
 import { createEvent, createStore } from 'effector';
-import { useList, useStore, useEvent } from 'effector-react/scope';
+import { useEvent, useList, useStore } from 'effector-react/scope';
 import React from 'react';
 import { Link } from 'react-router-dom';
 

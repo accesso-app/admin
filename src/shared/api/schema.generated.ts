@@ -3,6 +3,7 @@
  */
 
 export type Maybe<T> = T | null;
+export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
@@ -33,17 +34,25 @@ export interface Scalars {
 }
 
 export interface ApplicationCreate {
-  title: Scalars['String'];
+  allowedRegistrations?: InputMaybe<Scalars['Boolean']>;
+  isDev?: InputMaybe<Scalars['Boolean']>;
   redirectUri: Array<Scalars['String']>;
-  isDev?: Maybe<Scalars['Boolean']>;
-  allowedRegistrations?: Maybe<Scalars['Boolean']>;
+  title: Scalars['String'];
+}
+
+export interface ApplicationEdit {
+  allowedRegistrations?: InputMaybe<Scalars['Boolean']>;
+  id: Scalars['UUID'];
+  isDev?: InputMaybe<Scalars['Boolean']>;
+  redirectUri?: InputMaybe<Array<Scalars['String']>>;
+  title?: InputMaybe<Scalars['String']>;
 }
 
 export interface UserEdit {
+  email?: InputMaybe<Scalars['String']>;
+  firstName?: InputMaybe<Scalars['String']>;
   id: Scalars['UUID'];
-  email?: Maybe<Scalars['String']>;
-  firstName?: Maybe<Scalars['String']>;
-  lastName?: Maybe<Scalars['String']>;
+  lastName?: InputMaybe<Scalars['String']>;
 }
 
 export const scalarsEnumsHash: import('gqty').ScalarsEnumsHash = {
@@ -58,56 +67,63 @@ export const scalarsEnumsHash: import('gqty').ScalarsEnumsHash = {
 export const generatedSchema = {
   AccessToken: {
     __typename: { __type: 'String!' },
-    token: { __type: 'String!' },
-    scopes: { __type: '[String!]!' },
     expiresAt: { __type: 'DateTime!' },
-    registrationId: { __type: 'UUID!' },
     registration: { __type: 'UserRegistration' },
+    registrationId: { __type: 'UUID!' },
+    scopes: { __type: '[String!]!' },
+    token: { __type: 'String!' },
   },
   Application: {
     __typename: { __type: 'String!' },
+    allowedRegistrations: { __type: 'Boolean!' },
     id: { __type: 'UUID!' },
     isDev: { __type: 'Boolean!' },
     redirectUri: { __type: '[String!]!' },
-    title: { __type: 'String!' },
-    allowedRegistrations: { __type: 'Boolean!' },
     registrations: { __type: '[UserRegistration!]!' },
+    title: { __type: 'String!' },
   },
   ApplicationCreate: {
-    title: { __type: 'String!' },
-    redirectUri: { __type: '[String!]!' },
-    isDev: { __type: 'Boolean' },
     allowedRegistrations: { __type: 'Boolean' },
+    isDev: { __type: 'Boolean' },
+    redirectUri: { __type: '[String!]!' },
+    title: { __type: 'String!' },
+  },
+  ApplicationEdit: {
+    allowedRegistrations: { __type: 'Boolean' },
+    id: { __type: 'UUID!' },
+    isDev: { __type: 'Boolean' },
+    redirectUri: { __type: '[String!]' },
+    title: { __type: 'String' },
   },
   ApplicationSecret: {
     __typename: { __type: 'String!' },
+    allowedRegistrations: { __type: 'Boolean!' },
     id: { __type: 'UUID!' },
     isDev: { __type: 'Boolean!' },
     redirectUri: { __type: '[String!]!' },
-    title: { __type: 'String!' },
-    allowedRegistrations: { __type: 'Boolean!' },
     secretKey: { __type: 'String!' },
+    title: { __type: 'String!' },
   },
   RegisterRequest: {
     __typename: { __type: 'String!' },
-    email: { __type: 'String!' },
     code: { __type: 'String!' },
+    email: { __type: 'String!' },
     expiresAt: { __type: 'DateTime!' },
   },
   User: {
     __typename: { __type: 'String!' },
-    id: { __type: 'UUID!' },
-    email: { __type: 'String!' },
+    accessTokensCount: { __type: 'Int!' },
     canonicalEmail: { __type: 'String!' },
+    email: { __type: 'String!' },
     firstName: { __type: 'String!' },
+    id: { __type: 'UUID!' },
     lastName: { __type: 'String!' },
     registrations: { __type: '[UserRegistration!]!' },
-    accessTokensCount: { __type: 'Int!' },
   },
   UserEdit: {
-    id: { __type: 'UUID!' },
     email: { __type: 'String' },
     firstName: { __type: 'String' },
+    id: { __type: 'UUID!' },
     lastName: { __type: 'String' },
   },
   UserPasswordReset: {
@@ -117,99 +133,100 @@ export const generatedSchema = {
   },
   UserRegistration: {
     __typename: { __type: 'String!' },
-    id: { __type: 'UUID!' },
+    accessTokens: { __type: '[AccessToken!]!' },
+    application: { __type: 'Application' },
     applicationId: { __type: 'UUID!' },
     createdAt: { __type: 'DateTime!' },
-    userId: { __type: 'UUID!' },
+    id: { __type: 'UUID!' },
     user: { __type: 'User' },
-    application: { __type: 'Application' },
-    accessTokens: { __type: '[AccessToken!]!' },
+    userId: { __type: 'UUID!' },
   },
   mutation: {
     __typename: { __type: 'String!' },
     accessTokensDeleteForUser: { __type: 'Int!', __args: { userId: 'UUID!' } },
     applicationCreate: { __type: 'ApplicationSecret!', __args: { form: 'ApplicationCreate!' } },
+    applicationEdit: { __type: 'Application', __args: { form: 'ApplicationEdit!' } },
     applicationRegenerateSecret: {
       __type: 'ApplicationSecret',
       __args: { applicationId: 'UUID!' },
     },
     registerRequestCreate: { __type: 'RegisterRequest!', __args: { email: 'String!' } },
-    registerRequestDeleteAllForEmail: { __type: 'Int!', __args: { email: 'String!' } },
     registerRequestDelete: { __type: 'RegisterRequest', __args: { code: 'String!' } },
+    registerRequestDeleteAllForEmail: { __type: 'Int!', __args: { email: 'String!' } },
     userEdit: { __type: 'User', __args: { user: 'UserEdit!' } },
     userPasswordReset: { __type: 'UserPasswordReset', __args: { userId: 'UUID!' } },
   },
   query: {
     __typename: { __type: 'String!' },
-    version: { __type: 'String!' },
     accessTokens: { __type: '[AccessToken!]!' },
     application: { __type: 'Application', __args: { id: 'UUID!' } },
     applications: { __type: '[Application!]!' },
     registerRequests: { __type: '[RegisterRequest!]!' },
     registerRequestsByEmail: {
       __type: '[RegisterRequest!]!',
-      __args: { email: 'String!', count: 'Int!' },
+      __args: { count: 'Int!', email: 'String!' },
     },
     registerRequestsSearch: {
       __type: '[RegisterRequest!]!',
-      __args: { query: 'String!', count: 'Int!' },
+      __args: { count: 'Int!', query: 'String!' },
     },
-    users: { __type: '[User!]!' },
     userByEmail: { __type: 'User', __args: { email: 'String!' } },
     userById: { __type: 'User', __args: { userId: 'UUID!' } },
+    users: { __type: '[User!]!' },
     usersSearch: { __type: '[User!]!', __args: { query: 'String!' } },
+    version: { __type: 'String!' },
   },
   subscription: {},
 } as const;
 
 export interface AccessToken {
   __typename?: 'AccessToken';
-  token: ScalarsEnums['String'];
-  scopes: Array<ScalarsEnums['String']>;
   expiresAt: ScalarsEnums['DateTime'];
-  registrationId: ScalarsEnums['UUID'];
   registration?: Maybe<UserRegistration>;
+  registrationId: ScalarsEnums['UUID'];
+  scopes: Array<ScalarsEnums['String']>;
+  token: ScalarsEnums['String'];
 }
 
 export interface Application {
   __typename?: 'Application';
+  allowedRegistrations: ScalarsEnums['Boolean'];
   id: ScalarsEnums['UUID'];
   isDev: ScalarsEnums['Boolean'];
   redirectUri: Array<ScalarsEnums['String']>;
-  title: ScalarsEnums['String'];
-  allowedRegistrations: ScalarsEnums['Boolean'];
   registrations: Array<UserRegistration>;
+  title: ScalarsEnums['String'];
 }
 
 export interface ApplicationSecret {
   __typename?: 'ApplicationSecret';
+  allowedRegistrations: ScalarsEnums['Boolean'];
   id: ScalarsEnums['UUID'];
   isDev: ScalarsEnums['Boolean'];
   redirectUri: Array<ScalarsEnums['String']>;
-  title: ScalarsEnums['String'];
-  allowedRegistrations: ScalarsEnums['Boolean'];
   /**
    * Allowed to read only after application is created
    */
   secretKey: ScalarsEnums['String'];
+  title: ScalarsEnums['String'];
 }
 
 export interface RegisterRequest {
   __typename?: 'RegisterRequest';
-  email: ScalarsEnums['String'];
   code: ScalarsEnums['String'];
+  email: ScalarsEnums['String'];
   expiresAt: ScalarsEnums['DateTime'];
 }
 
 export interface User {
   __typename?: 'User';
-  id: ScalarsEnums['UUID'];
-  email: ScalarsEnums['String'];
+  accessTokensCount: ScalarsEnums['Int'];
   canonicalEmail: ScalarsEnums['String'];
+  email: ScalarsEnums['String'];
   firstName: ScalarsEnums['String'];
+  id: ScalarsEnums['UUID'];
   lastName: ScalarsEnums['String'];
   registrations: Array<UserRegistration>;
-  accessTokensCount: ScalarsEnums['Int'];
 }
 
 export interface UserPasswordReset {
@@ -220,57 +237,58 @@ export interface UserPasswordReset {
 
 export interface UserRegistration {
   __typename?: 'UserRegistration';
-  id: ScalarsEnums['UUID'];
+  accessTokens: Array<AccessToken>;
+  application?: Maybe<Application>;
   /**
    * Field renamed from `client_id`
    */
   applicationId: ScalarsEnums['UUID'];
   createdAt: ScalarsEnums['DateTime'];
-  userId: ScalarsEnums['UUID'];
+  id: ScalarsEnums['UUID'];
   user?: Maybe<User>;
-  application?: Maybe<Application>;
-  accessTokens: Array<AccessToken>;
+  userId: ScalarsEnums['UUID'];
 }
 
 export interface Mutation {
   __typename?: 'Mutation';
   accessTokensDeleteForUser: (args: { userId: Scalars['UUID'] }) => ScalarsEnums['Int'];
   applicationCreate: (args: { form: ApplicationCreate }) => ApplicationSecret;
+  applicationEdit: (args: { form: ApplicationEdit }) => Maybe<Application>;
   applicationRegenerateSecret: (args: {
     applicationId: Scalars['UUID'];
   }) => Maybe<ApplicationSecret>;
   registerRequestCreate: (args: { email: Scalars['String'] }) => RegisterRequest;
-  registerRequestDeleteAllForEmail: (args: { email: Scalars['String'] }) => ScalarsEnums['Int'];
   registerRequestDelete: (args: { code: Scalars['String'] }) => Maybe<RegisterRequest>;
+  registerRequestDeleteAllForEmail: (args: { email: Scalars['String'] }) => ScalarsEnums['Int'];
   userEdit: (args: { user: UserEdit }) => Maybe<User>;
   userPasswordReset: (args: { userId: Scalars['UUID'] }) => Maybe<UserPasswordReset>;
 }
 
 export interface Query {
   __typename?: 'Query';
-  version: ScalarsEnums['String'];
   accessTokens: Array<AccessToken>;
   application: (args: { id: Scalars['UUID'] }) => Maybe<Application>;
   applications: Array<Application>;
   registerRequests: Array<RegisterRequest>;
   registerRequestsByEmail: (args: {
-    email: Scalars['String'];
     /**
      * @defaultValue `100`
      */
     count: Scalars['Int'];
+    email: Scalars['String'];
   }) => Array<RegisterRequest>;
   registerRequestsSearch: (args: {
-    query: Scalars['String'];
     /**
      * @defaultValue `100`
      */
     count: Scalars['Int'];
+    query: Scalars['String'];
   }) => Array<RegisterRequest>;
-  users: Array<User>;
   userByEmail: (args: { email: Scalars['String'] }) => Maybe<User>;
   userById: (args: { userId: Scalars['UUID'] }) => Maybe<User>;
+  users: Array<User>;
   usersSearch: (args: { query: Scalars['String'] }) => Array<User>;
+  version: ScalarsEnums['String'];
 }
 
 export interface Subscription {

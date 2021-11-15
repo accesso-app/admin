@@ -6,6 +6,6 @@ export const Checkbox = (props: React.HTMLProps<HTMLInputElement>) => (
     {...props}
     className={`${
       props.className ?? ''
-    } form-checkbox appearance-none mt-1 h-6 w-6 bg-white block shadow-sm sm:text-sm border border-gray-300 rounded checked:bg-indigo-600 focus:ring-indigo-500`}
+    } form-tick appearance-none text-indigo-600 mt-1 h-6 w-6 bg-white block shadow-sm sm:text-sm border border-gray-300 rounded focus:ring-indigo-500`}
   />
 );
