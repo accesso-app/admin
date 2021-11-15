@@ -12,7 +12,5 @@ module.exports = {
       borderColor: ['disabled'],
     },
   },
-  plugins: [
-    require('postcss-import'),
-  ],
+  plugins: [require('@tailwindcss/forms')],
 };

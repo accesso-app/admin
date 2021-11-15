@@ -1,7 +1,8 @@
+import { createEffect, createEvent, createStore, guard, restore, sample } from 'effector';
 import { createHatch } from 'framework';
-import { createEffect, createEvent, createStore, guard, restore, sample } from "effector";
-import { Application, query, resolved } from "~/shared/api";
-import { spread } from "patronum";
+import { spread } from 'patronum';
+
+import { Application, mutation, query, resolved } from '~/shared/api';
 
 interface LocalApp {
   id: string;
@@ -25,25 +26,25 @@ export const $redirectUri = restore(redirectUriChanged, []);
 export const $allowedRegistrations = createStore(false);
 export const $isDev = createStore(false);
 
-$isDev.on(isDevChanged, isDev => !isDev);
-$isDev.on(allowedRegChanged, allowed => !allowed);
+$isDev.on(isDevChanged, (isDev) => !isDev);
+$allowedRegistrations.on(allowedRegChanged, (allowed) => !allowed);
 
 const appSaveFx = createEffect((app: LocalApp) =>
   resolved(() => {
-    // const fetched = mutation.applicationEdit({ app });
-    // if (!fetched) return null;
-    // return mapApp(fetched);
+    const fetched = mutation.applicationEdit({ form: app });
+    if (!fetched) return null;
+    return mapApp(fetched);
   }),
 );
 
 const appLoadFx = createEffect((id: string) =>
-  resolved(  () => {
+  resolved(() => {
     const application = query.application({ id });
     if (!application) {
       return null;
     }
     return mapApp(application);
-  })
+  }),
 );
 
 const $appId = hatch.$params.map((params) => params['applicationId']);
@@ -51,7 +52,7 @@ const $appId = hatch.$params.map((params) => params['applicationId']);
 sample({
   source: $appId,
   clock: [hatch.enter, hatch.update],
-  target: appLoadFx
+  target: appLoadFx,
 });
 
 const appLoaded = guard({
@@ -66,7 +67,7 @@ spread({
     isDev: $isDev,
     redirectUri: $redirectUri,
     title: $title,
-    allowedRegistrations: $allowedRegistrations
+    allowedRegistrations: $allowedRegistrations,
   },
 });
 
@@ -88,6 +89,6 @@ function mapApp(app: Application): LocalApp {
     isDev: app.isDev!,
     redirectUri: app.redirectUri as Array<string>,
     title: app.title!,
-    allowedRegistrations: app.allowedRegistrations!
+    allowedRegistrations: app.allowedRegistrations!,
   };
 }
