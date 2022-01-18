@@ -26,6 +26,7 @@ export const $originalName = createStore('');
 export const $id = createStore('');
 export const $isUserFound = createStore(false);
 export const $profileLoading = createStore(false);
+export const $profileEditing = createStore(false);
 
 export function UsersViewPage() {
   // TODO: add breadcrumbs
@@ -79,6 +80,8 @@ function Profile() {
   const email = useStore($email);
   const firstName = useStore($firstName);
   const lastName = useStore($lastName);
+  const saving = useStore($profileEditing);
+
   const onEmailChange = useEvent(emailChanged);
   const onFirstNameChange = useEvent(firstNameChanged);
   const onLastNameChange = useEvent(lastNameChanged);
@@ -101,7 +104,7 @@ function Profile() {
         <Card
           footer={
             <div className="text-right">
-              <ButtonPrimary>Save</ButtonPrimary>
+              <ButtonPrimary disabled={saving}>{saving ? 'Saving…' : 'Save'}</ButtonPrimary>
             </div>
           }
         >
