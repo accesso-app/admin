@@ -1,11 +1,11 @@
-import { createEffect, createEvent, createStore, guard, sample } from 'effector';
+import { createDomain, createEffect, createEvent, createStore, guard, sample } from 'effector';
 import { createHatch } from 'framework';
-import { every } from 'patronum';
+import { debug, every } from 'patronum';
 
 import { LocalRegisterRequest, RequestStatus } from '~/pages/registration-requests/common';
 import { mutation, query, resolved } from '~/shared/api';
 
-export const hatch = createHatch();
+export const hatch = createHatch(createDomain('registration-requests'));
 
 export const $emailForNewRequest = createStore('');
 export const $newRequestStatus = createStore<RequestStatus>('new');
@@ -57,6 +57,8 @@ $newRequestStatus.reset(hatch.exit, hatch.enter);
 // do not reset registerRequests to hide empty page between page changes
 
 sample({ clock: hatch.enter, target: loadRequestsFx });
+
+debug(loadRequestsFx, hatch.enter, hatch.update, hatch.exit);
 
 $registerRequests.on(loadRequestsFx.doneData, (_, list) => list);
 
