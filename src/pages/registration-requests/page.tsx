@@ -29,7 +29,7 @@ export const registrationRequestGenerateNewClicked =
 type Code = string;
 export const $registerRequestPendingMap = createStore<Record<Code, boolean>>({});
 
-export const RegistationRequestsPage = () => {
+export const RegistrationRequestsPage = () => {
   return (
     <NavigationTemplate>
       <StackedTemplate title="Registration Requests">
@@ -79,8 +79,8 @@ function NewRegistrationRequest() {
         )}
         <InputSearch
           disabled={status === 'pending'}
-          className="rounded-r-none"
-          placeholder="email@domain.com"
+          className="rounded-r-none w-60"
+          placeholder="email@domain.com another@domain.com"
         />
         <ButtonWhite
           disabled={status === 'pending'}

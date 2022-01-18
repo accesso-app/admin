@@ -33,6 +33,12 @@ const registrationRequestCreateFx = createEffect((targetEmail: string) =>
   }),
 );
 
+const batchRegistrationRequestCreateFx = createEffect(async (emails: string[]) => {
+  for (const email of emails) {
+    await registrationRequestCreateFx(email);
+  }
+});
+
 const registrationRequestMakeANewFx = createEffect(
   (options: { generateForEmail: string; clickedOnCode: string }) =>
     resolved(
@@ -83,7 +89,11 @@ $newRequestStatus.on(emailForNewRequestChanged, () => 'new');
 guard({
   clock: createRegistrationRequestClicked,
   filter: every({
-    stores: [validateRequestEmailFx.pending, registrationRequestCreateFx.pending],
+    stores: [
+      validateRequestEmailFx.pending,
+      registrationRequestCreateFx.pending,
+      batchRegistrationRequestCreateFx.pending,
+    ],
     predicate: false,
   }),
   source: $emailForNewRequest,
@@ -92,12 +102,17 @@ guard({
 
 sample({
   clock: validateRequestEmailFx.doneData,
-  target: registrationRequestCreateFx,
+  fn: (emailInput) =>
+    emailInput
+      .split(' ')
+      .map((email) => email.trim())
+      .filter(Boolean),
+  target: batchRegistrationRequestCreateFx,
 });
 
 sample({
   clock: every({
-    stores: [validateRequestEmailFx.pending, registrationRequestCreateFx.pending],
+    stores: [validateRequestEmailFx.pending, batchRegistrationRequestCreateFx.pending],
     predicate: true,
   }),
   fn: () => 'pending' as RequestStatus,
@@ -105,7 +120,7 @@ sample({
 });
 
 $newRequestStatus.on(registrationRequestCreateFx.done, () => 'done');
-$emailForNewRequest.reset(registrationRequestCreateFx.done);
+$emailForNewRequest.reset(batchRegistrationRequestCreateFx.done);
 $registerRequests.on(registrationRequestCreateFx.doneData, (list, request) => [request, ...list]);
 
 $newRequestStatus.on(validateRequestEmailFx.fail, () => 'invalid');
@@ -144,13 +159,9 @@ $registerRequestPendingMap
 
 $registerRequests.on(registrationRequestMakeANewFx.done, (list, { params, result: request }) => {
   const clickedRequestIndex = list.findIndex((item) => item.code === params.clickedOnCode);
-  if (clickedRequestIndex === -1) {
-    // If found not request with that code, just add to the list beginning
-    return [request, ...list];
-  }
 
-  // If clicked on first element, index will be -1
-  const insertIndex = Math.max(clickedRequestIndex - 1, 0);
+  // If clicked on non existent element, index will be -1
+  const insertIndex = Math.max(clickedRequestIndex, 0);
 
   // Add just before clicked element
   list.splice(insertIndex, 0, request);
