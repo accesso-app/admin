@@ -16,4 +16,5 @@ RUN rm -rf src node_modules
 # ---- Release ----
 FROM nginx:1.21.0
 
+COPY ./nginx.conf /etc/nginx/nginx.conf
 COPY --from=build /app/dist /usr/share/nginx/html
