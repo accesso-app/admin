@@ -56,7 +56,7 @@ sample({
 });
 
 const appLoaded = guard({
-  clock: [appLoadFx.doneData],
+  clock: appLoadFx.doneData,
   filter: (application): application is LocalApp => application !== null,
 });
 
