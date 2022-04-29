@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import { createEvent, createStore } from 'effector';
-import { useEvent, useList, useStore } from 'effector-react/scope';
+import { useEvent, useList, useStore, useStoreMap } from 'effector-react/scope';
 import React from 'react';
 
 import { UserAddIcon } from '@heroicons/react/outline';
@@ -24,8 +24,12 @@ export const $registerRequests = createStore<LocalRegisterRequest[]>([]);
 export const emailForNewRequestChanged = createEvent<string>();
 export const createRegistrationRequestClicked = createEvent();
 export const registrationRequestDeleteClicked = createEvent<{ code: string }>();
+export const registrationRequestGenerateNewClicked =
+  createEvent<{ generateForEmail: string; clickedOnCode: string }>();
+type Code = string;
+export const $registerRequestPendingMap = createStore<Record<Code, boolean>>({});
 
-export const RegistationRequestsPage = () => {
+export const RegistrationRequestsPage = () => {
   return (
     <NavigationTemplate>
       <StackedTemplate title="Registration Requests">
@@ -75,8 +79,8 @@ function NewRegistrationRequest() {
         )}
         <InputSearch
           disabled={status === 'pending'}
-          className="rounded-r-none"
-          placeholder="email@domain.com"
+          className="rounded-r-none w-60"
+          placeholder="email@domain.com another@domain.com"
         />
         <ButtonWhite
           disabled={status === 'pending'}
@@ -143,7 +147,7 @@ function RegistrationRequestsList() {
         <ColumnHead>Email</ColumnHead>
         <ColumnHead>Code</ColumnHead>
         <ColumnHead>Expiration</ColumnHead>
-        <ColumnHead>
+        <ColumnHead className="lg:w-80">
           <span className="sr-only">Actions</span>
         </ColumnHead>
       </TableHead>
@@ -156,15 +160,23 @@ function RegistrationRequest({ request }: { request: LocalRegisterRequest }) {
   const date = React.useMemo(() => dayjs(request.expiresAt), [request.expiresAt]);
   const isExpired = dayjs().isAfter(date);
 
-  const [deleting, toggleDelete] = React.useReducer((is) => !is, false);
+  const generateNewCode = useEvent(registrationRequestGenerateNewClicked);
+  const regenerateClicked = React.useCallback(
+    () => generateNewCode({ generateForEmail: request.email!, clickedOnCode: request.code! }),
+    [request.email, request.code, generateNewCode],
+  );
+
+  const [deleteOpened, toggleDelete] = React.useReducer((is) => !is, false);
   const deleteClicked = useEvent(registrationRequestDeleteClicked);
   const onDelete = React.useCallback(
     () => deleteClicked({ code: request.code! }),
     [request.code, deleteClicked],
   );
   React.useEffect(() => {
-    if (deleting) toggleDelete();
+    if (deleteOpened) toggleDelete();
   }, [request.code]);
+
+  const pending = useRegisterRequestPending(request.code!);
 
   return (
     <Row className={request.new ? 'bg-yellow-50' : ''}>
@@ -186,33 +198,58 @@ function RegistrationRequest({ request }: { request: LocalRegisterRequest }) {
       </Column>
       <Column className="text-right">
         <span className="lg:hidden pr-2">Actions:</span>
-        {deleting ? (
-          <>
-            <button
-              className="px-4 py-2 whitespace-nowrap text-right text-md lg:text-sm font-medium text-red-600
-          hover:text-white hover:bg-red-600 border-transparent border rounded-md"
-              onClick={onDelete}
-            >
-              Yes
-            </button>
-            <button
-              className="px-4 py-2 whitespace-nowrap text-right text-md lg:text-sm font-medium text-gray-600
-          hover:text-gray-900 hover:bg-gray-200 border-transparent border rounded-md"
-              onClick={toggleDelete}
-            >
-              No, undo
-            </button>
-          </>
+        {pending ? (
+          <span className="px-4 py-2 whitespace-nowrap text-md lg:text-sm border border-transparent select-none block text-center">
+            Pending…
+          </span>
         ) : (
-          <button
-            className="px-4 py-2 whitespace-nowrap text-right text-md lg:text-sm font-medium text-red-600
+          <>
+            {deleteOpened ? null : (
+              <button
+                className="px-4 py-2 whitespace-nowrap text-right text-md lg:text-sm font-medium border-transparent border rounded-md
+          text-indigo-600 hover:text-indigo-900 hover:bg-indigo-50"
+                onClick={regenerateClicked}
+              >
+                Create new
+              </button>
+            )}
+            {deleteOpened ? (
+              <>
+                <button
+                  className="px-4 py-2 whitespace-nowrap text-right text-md lg:text-sm font-medium text-red-600
+          hover:text-white hover:bg-red-600 border-transparent border rounded-md"
+                  onClick={onDelete}
+                >
+                  Yes, delete
+                </button>
+                <button
+                  className="px-4 py-2 whitespace-nowrap text-right text-md lg:text-sm font-medium text-gray-600
+          hover:text-gray-900 hover:bg-gray-200 border-transparent border rounded-md"
+                  onClick={toggleDelete}
+                >
+                  No, undo
+                </button>
+              </>
+            ) : (
+              <button
+                className="px-4 py-2 whitespace-nowrap text-right text-md lg:text-sm font-medium text-red-600
           hover:text-red-900 hover:bg-red-50 border-transparent border rounded-md"
-            onClick={toggleDelete}
-          >
-            Delete
-          </button>
+                onClick={toggleDelete}
+              >
+                Delete
+              </button>
+            )}
+          </>
         )}
       </Column>
     </Row>
   );
+}
+
+function useRegisterRequestPending(code: Code) {
+  return useStoreMap({
+    store: $registerRequestPendingMap,
+    keys: [code],
+    fn: (map, [code]) => map[code] ?? false,
+  });
 }

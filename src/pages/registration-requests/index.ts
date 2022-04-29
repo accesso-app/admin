@@ -5,4 +5,4 @@ import * as page from './page';
 
 contract({ page, model });
 
-export const RegistrationRequestsPage = withHatch(model.hatch, page.RegistationRequestsPage);
+export const RegistrationRequestsPage = withHatch(model.hatch, page.RegistrationRequestsPage);

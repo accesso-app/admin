@@ -2,7 +2,6 @@ import * as dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { allSettled, createEvent, fork, forward } from 'effector';
 import { Provider } from 'effector-react/scope';
-import { createBrowserApplication } from 'framework';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Router } from 'react-router-dom';
@@ -11,6 +10,7 @@ import '~/app/main.css';
 import { historyChanged, historyPush, historyReplace } from '~/entities/navigation';
 import { Pages } from '~/pages';
 import { ROUTES } from '~/pages/routes';
+import { createBrowserApplication } from '~/shared/lib/framework';
 
 dayjs.extend(relativeTime);
 

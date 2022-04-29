@@ -1,6 +1,6 @@
 import { createEffect, createEvent, createStore, guard, restore, sample } from 'effector';
 import { createHatch } from 'framework';
-import { spread } from 'patronum';
+import { every, spread } from 'patronum';
 
 import { mutation, query, resolved, User } from '~/shared/api';
 
@@ -48,6 +48,7 @@ export const $firstName = restore(firstNameChanged, '');
 export const $lastName = restore(lastNameChanged, '');
 export const $isUserFound = createStore(false);
 export const $profileLoading = userLoadFx.pending;
+export const $profileEditing = userSaveFx.pending;
 
 const $userId = hatch.$params.map((params) => params['userId']);
 
@@ -72,8 +73,13 @@ spread({
 
 $originalName.on(userLoaded, (_, { firstName, lastName }) => `${firstName} ${lastName}`);
 
-sample({
+const readyToSubmit = sample({
   source: { id: $id, email: $email, firstName: $firstName, lastName: $lastName },
   clock: profileSubmitted,
+});
+
+guard({
+  source: readyToSubmit,
+  filter: every({ stores: [$profileLoading, $profileEditing], predicate: false }),
   target: userSaveFx,
 });

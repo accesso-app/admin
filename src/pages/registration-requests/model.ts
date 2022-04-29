@@ -1,19 +1,23 @@
-import { createEffect, createEvent, createStore, guard, sample } from 'effector';
+import { createDomain, createEffect, createEvent, createStore, guard, sample } from 'effector';
 import { createHatch } from 'framework';
 import { every } from 'patronum';
 
 import { LocalRegisterRequest, RequestStatus } from '~/pages/registration-requests/common';
 import { mutation, query, resolved } from '~/shared/api';
 
-export const hatch = createHatch();
+export const hatch = createHatch(createDomain('registration-requests'));
 
 export const $emailForNewRequest = createStore('');
 export const $newRequestStatus = createStore<RequestStatus>('new');
 export const $registerRequests = createStore<LocalRegisterRequest[]>([]);
+type Code = string;
+export const $registerRequestPendingMap = createStore<Record<Code, boolean>>({});
 
 export const emailForNewRequestChanged = createEvent<string>();
 export const createRegistrationRequestClicked = createEvent();
 export const registrationRequestDeleteClicked = createEvent<{ code: string }>();
+export const registrationRequestGenerateNewClicked =
+  createEvent<{ generateForEmail: string; clickedOnCode: string }>();
 
 const validateRequestEmailFx = createEffect<string, string, string>((email) => {
   if (email.match(/\w+@\w+/gim)) {
@@ -27,6 +31,25 @@ const registrationRequestCreateFx = createEffect((targetEmail: string) =>
     const { email, code, expiresAt } = mutation.registerRequestCreate({ email: targetEmail });
     return { email, code, expiresAt, new: true } as LocalRegisterRequest;
   }),
+);
+
+const batchRegistrationRequestCreateFx = createEffect(async (emails: string[]) => {
+  for (const email of emails) {
+    await registrationRequestCreateFx(email);
+  }
+});
+
+const registrationRequestMakeANewFx = createEffect(
+  (options: { generateForEmail: string; clickedOnCode: string }) =>
+    resolved(
+      () => {
+        const { email, code, expiresAt } = mutation.registerRequestCreate({
+          email: options.generateForEmail,
+        });
+        return { email, code, expiresAt, new: true } as LocalRegisterRequest;
+      },
+      { refetch: true, noCache: true },
+    ),
 );
 
 const loadRequestsFx = createEffect(() =>
@@ -66,7 +89,11 @@ $newRequestStatus.on(emailForNewRequestChanged, () => 'new');
 guard({
   clock: createRegistrationRequestClicked,
   filter: every({
-    stores: [validateRequestEmailFx.pending, registrationRequestCreateFx.pending],
+    stores: [
+      validateRequestEmailFx.pending,
+      registrationRequestCreateFx.pending,
+      batchRegistrationRequestCreateFx.pending,
+    ],
     predicate: false,
   }),
   source: $emailForNewRequest,
@@ -75,12 +102,17 @@ guard({
 
 sample({
   clock: validateRequestEmailFx.doneData,
-  target: registrationRequestCreateFx,
+  fn: (emailInput) =>
+    emailInput
+      .split(' ')
+      .map((email) => email.trim())
+      .filter(Boolean),
+  target: batchRegistrationRequestCreateFx,
 });
 
 sample({
   clock: every({
-    stores: [validateRequestEmailFx.pending, registrationRequestCreateFx.pending],
+    stores: [validateRequestEmailFx.pending, batchRegistrationRequestCreateFx.pending],
     predicate: true,
   }),
   fn: () => 'pending' as RequestStatus,
@@ -88,7 +120,7 @@ sample({
 });
 
 $newRequestStatus.on(registrationRequestCreateFx.done, () => 'done');
-$emailForNewRequest.reset(registrationRequestCreateFx.done);
+$emailForNewRequest.reset(batchRegistrationRequestCreateFx.done);
 $registerRequests.on(registrationRequestCreateFx.doneData, (list, request) => [request, ...list]);
 
 $newRequestStatus.on(validateRequestEmailFx.fail, () => 'invalid');
@@ -100,6 +132,49 @@ sample({
   target: registerRequestDeleteFx,
 });
 
+$registerRequestPendingMap
+  .on(registerRequestDeleteFx, (map, params) => ({
+    ...map,
+    [params.code]: true,
+  }))
+  .on(registerRequestDeleteFx.finally, (map, { params }) => deleteIfExists(map, params.code));
+
 $registerRequests.on(registerRequestDeleteFx.done, (list, { params }) =>
   list.filter((item) => item.code !== params.code),
 );
+
+sample({
+  clock: registrationRequestGenerateNewClicked,
+  target: registrationRequestMakeANewFx,
+});
+
+$registerRequestPendingMap
+  .on(registrationRequestMakeANewFx, (map, params) => ({
+    ...map,
+    [params.clickedOnCode]: true,
+  }))
+  .on(registrationRequestMakeANewFx.finally, (map, { params }) =>
+    deleteIfExists(map, params.clickedOnCode),
+  );
+
+$registerRequests.on(registrationRequestMakeANewFx.done, (list, { params, result: request }) => {
+  const clickedRequestIndex = list.findIndex((item) => item.code === params.clickedOnCode);
+
+  // If clicked on non existent element, index will be -1
+  const insertIndex = Math.max(clickedRequestIndex, 0);
+
+  // Add just before clicked element
+  list.splice(insertIndex, 0, request);
+  return [...list];
+});
+
+/**
+ * Modifies original map and returns shallow copy
+ */
+function deleteIfExists<T extends object, K extends keyof T>(map: T, key: K): T {
+  if (map[key]) {
+    delete map[key];
+    return { ...map };
+  }
+  return map;
+}
