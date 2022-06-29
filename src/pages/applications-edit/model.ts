@@ -1,4 +1,4 @@
-import { createEffect, createEvent, createStore, guard, restore, sample } from 'effector';
+import { createEffect, createEvent, createStore, guard, merge, restore, sample } from 'effector';
 import { createHatch } from 'framework';
 import { spread } from 'patronum';
 
@@ -62,7 +62,7 @@ const appLoaded = guard({
 });
 
 spread({
-  source: appLoaded,
+  source: merge([appLoaded, appSaveFx.done.map(({ params }) => params)]),
   targets: {
     id: $id,
     isDev: $isDev,
@@ -76,7 +76,7 @@ sample({
   source: {
     id: $id,
     title: $title,
-    redirectUri: $redirectUri,
+    redirectUri: $redirectUri.map((list) => list.filter((uri) => uri.trim().length > 0)),
     allowedRegistrations: $allowedRegistrations,
     isDev: $isDev,
   },
