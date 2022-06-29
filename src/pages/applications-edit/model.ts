@@ -16,13 +16,14 @@ export const hatch = createHatch();
 
 export const applicationSubmitted = createEvent();
 export const titleChanged = createEvent<string>();
-export const redirectUriChanged = createEvent<string[]>();
+export const redirectUriChanged = createEvent<{ index: number; uri: string }>();
+export const redirectUriAddClicked = createEvent();
 export const allowedRegChanged = createEvent<void>();
 export const isDevChanged = createEvent<void>();
 
 export const $id = createStore('');
 export const $title = restore(titleChanged, '');
-export const $redirectUri = restore(redirectUriChanged, []);
+export const $redirectUri = createStore<string[]>([]);
 export const $allowedRegistrations = createStore(false);
 export const $isDev = createStore(false);
 
@@ -83,6 +84,16 @@ sample({
   target: appSaveFx,
 });
 
+$redirectUri.on(redirectUriChanged, (list, { index, uri }) =>
+  list.map((found, foundIndex) => (foundIndex === index ? uri : found)),
+);
+$redirectUri.on(redirectUriAddClicked, (list) => {
+  if (last(list) !== '') {
+    return [...list, ''];
+  }
+  return list;
+});
+
 function mapApp(app: Application): LocalApp {
   return {
     id: app.id!,
@@ -91,4 +102,8 @@ function mapApp(app: Application): LocalApp {
     title: app.title!,
     allowedRegistrations: app.allowedRegistrations!,
   };
+}
+
+function last<T>(list: T[]): T | undefined {
+  return list[list.length - 1];
 }

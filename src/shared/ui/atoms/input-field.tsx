@@ -12,17 +12,24 @@ export const Input = (props: React.HTMLProps<HTMLInputElement>) => (
 export function Field({
   label,
   children,
-  htmlFor,
+  actions = null,
+  className = '',
 }: {
   label: string;
   children: React.ReactNode;
-  htmlFor?: string;
+  actions?: React.ReactNode;
+  className?: string;
 }) {
   return (
     <>
-      <label htmlFor={htmlFor} className={'block text-sm font-medium text-gray-700'}>
-        {label}
-      </label>
+      <div
+        className={
+          'block text-sm font-medium text-gray-700 flex flex-row justify-between' + className
+        }
+      >
+        <span>{label}</span>
+        {actions ? <div className="">{actions}</div> : null}
+      </div>
       <div className="mt-1">{children}</div>
     </>
   );
