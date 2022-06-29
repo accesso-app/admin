@@ -1,6 +1,6 @@
 #
 # ---- Build ----
-FROM node:16.3.0-alpine3.11 as build
+FROM node:18.4.0-alpine3.16 as build
 
 # Workdir in build stage should be equal with release stage, razzle uses this path
 WORKDIR /app
@@ -14,7 +14,7 @@ RUN rm -rf src node_modules
 
 #
 # ---- Release ----
-FROM nginx:1.21.0
+FROM nginx:1.23.0
 
 COPY ./nginx.conf /etc/nginx/nginx.conf
 COPY --from=build /app/dist /usr/share/nginx/html
