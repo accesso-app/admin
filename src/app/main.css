@@ -10,4 +10,16 @@
     .button-action {
         @apply border rounded hover:bg-gray-50 select-none;
     }
+
+    .button {
+        @apply inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2;
+    }
+
+    .button-primary {
+        @apply text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500;
+    }
+
+    .button-dangerous {
+        @apply text-white bg-red-600 hover:bg-red-500 focus:ring-pink-600;
+    }
 }

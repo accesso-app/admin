@@ -11,6 +11,7 @@ import {
   Input,
   Note,
   Paragraph,
+  Separator,
 } from '~/shared/ui';
 
 export const profileSubmitted = createEvent();
@@ -62,14 +63,6 @@ function UserView() {
       <Registrations />
       <Separator />
       <Actions />
-    </div>
-  );
-}
-
-function Separator() {
-  return (
-    <div className="py-5 hidden sm:block">
-      <div className="border-t border-gray-200" />
     </div>
   );
 }

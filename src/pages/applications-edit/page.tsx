@@ -3,8 +3,17 @@ import { useEvent, useStore } from 'effector-react/scope';
 import React from 'react';
 
 import { NavigationTemplate, StackedTemplate } from '~/entities/navigation';
-import { ButtonPrimary, Card, DescriptionTemplate, Field, Input, Paragraph } from '~/shared/ui';
-import { Checkbox } from '~/shared/ui/atoms';
+import {
+  ButtonPrimary,
+  Card,
+  Checkbox,
+  DescriptionTemplate,
+  Field,
+  Input,
+  Note,
+  Paragraph,
+  Separator,
+} from '~/shared/ui';
 
 //#region Ports
 export const applicationSubmitted = createEvent();
@@ -13,12 +22,14 @@ export const redirectUriChanged = createEvent<{ index: number; uri: string }>();
 export const redirectUriAddClicked = createEvent();
 export const allowedRegChanged = createEvent<void>();
 export const isDevChanged = createEvent<void>();
+export const regenerateSecretClicked = createEvent();
 
 export const $id = createStore('');
 export const $title = createStore('');
 export const $redirectUri = createStore<string[]>([]);
 export const $allowedRegistrations = createStore(false);
 export const $isDev = createStore(false);
+export const $secretKey = createStore<null | string>(null);
 //#endregion
 
 export function ApplicationsEditPage() {
@@ -35,6 +46,8 @@ function ApplicationView() {
   return (
     <div className="space-y-10 sm:space-y-0">
       <GeneralInfo />
+      <Separator />
+      <Keys />
     </div>
   );
 }
@@ -129,6 +142,41 @@ function GeneralInfo() {
           </div>
         </Card>
       </form>
+    </DescriptionTemplate>
+  );
+}
+
+function Keys() {
+  const secretKey = useStore($secretKey);
+
+  const onSecretRegenerate = useEvent(regenerateSecretClicked);
+
+  return (
+    <DescriptionTemplate
+      description={
+        <Paragraph title="Keys">Secret key you use to authorize through Accesso API</Paragraph>
+      }
+    >
+      <Card
+        footer={
+          <button className="button button-dangerous" onClick={onSecretRegenerate}>
+            Generate new secret
+          </button>
+        }
+      >
+        <div className={`grid grid-cols-6 gap-6`}>
+          <div className="col-span-6 lg:col-span-4 space-y-4">
+            <Field label="Secret key">
+              <Input
+                value={secretKey ?? '****************************************************'}
+                readOnly
+                className="font-mono bg-gray-100 text-gray-500"
+              />
+            </Field>
+            <Note text="This key is used to authorize into your application through Accesso. It is important to keep it in safe" />
+          </div>
+        </div>
+      </Card>
     </DescriptionTemplate>
   );
 }

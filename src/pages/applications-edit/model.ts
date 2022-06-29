@@ -1,4 +1,4 @@
-import { createEffect, createEvent, createStore, guard, merge, restore, sample } from 'effector';
+import { createEffect, createEvent, createStore, merge, restore, sample } from 'effector';
 import { createHatch } from 'framework';
 import { spread } from 'patronum';
 
@@ -20,12 +20,14 @@ export const redirectUriChanged = createEvent<{ index: number; uri: string }>();
 export const redirectUriAddClicked = createEvent();
 export const allowedRegChanged = createEvent<void>();
 export const isDevChanged = createEvent<void>();
+export const regenerateSecretClicked = createEvent();
 
 export const $id = createStore('');
 export const $title = restore(titleChanged, '');
 export const $redirectUri = createStore<string[]>([]);
 export const $allowedRegistrations = createStore(false);
 export const $isDev = createStore(false);
+export const $secretKey = createStore<string | null>(null);
 
 $isDev.on(isDevChanged, (isDev) => !isDev);
 $allowedRegistrations.on(allowedRegChanged, (allowed) => !allowed);
@@ -48,6 +50,19 @@ const appLoadFx = createEffect((id: string) =>
   }),
 );
 
+const appRegenerateSecretFx = createEffect((applicationId: string) =>
+  resolved(
+    () => {
+      const application = mutation.applicationRegenerateSecret({ applicationId });
+      if (!application) {
+        return null;
+      }
+      return application.secretKey;
+    },
+    { noCache: true, refetch: true },
+  ),
+);
+
 const $appId = hatch.$params.map((params) => params['applicationId']);
 
 sample({
@@ -56,7 +71,7 @@ sample({
   target: appLoadFx,
 });
 
-const appLoaded = guard({
+const appLoaded = sample({
   clock: [appLoadFx.doneData],
   filter: (application): application is LocalApp => application !== null,
 });
@@ -71,6 +86,8 @@ spread({
     allowedRegistrations: $allowedRegistrations,
   },
 });
+
+$secretKey.reset(appLoaded);
 
 sample({
   source: {
@@ -93,6 +110,17 @@ $redirectUri.on(redirectUriAddClicked, (list) => {
   }
   return list;
 });
+
+sample({
+  clock: regenerateSecretClicked,
+  source: $appId,
+  target: appRegenerateSecretFx,
+});
+
+$secretKey.on(
+  appRegenerateSecretFx.doneData.filter({ fn: (secret) => secret !== null }),
+  (_, secret) => secret,
+);
 
 function mapApp(app: Application): LocalApp {
   return {
