@@ -7,5 +7,8 @@
   "trailingComma": "all",
   "useTabs": false,
   "importOrder": ["^@(.*)$", "^([^~])$", "^~/(.*)$", "^[./]"],
-  "importOrderSeparation": true
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true,
+  "importOrderGroupNamespaceSpecifiers": true,
+  "importOrderCaseInsensitive": true
 }
