@@ -1,10 +1,10 @@
-import { createEffect, createEvent, createStore, guard, restore, sample } from 'effector';
+import { createEffect, createEvent, createStore, restore, sample } from 'effector';
 import { createHatch } from 'framework';
 import { spread } from 'patronum';
 
 import { mutation, query, resolved, User } from '~/shared/api';
 
-import { LocalUser } from './common';
+import { LocalUser, Registration } from './common';
 
 export const hatch = createHatch();
 
@@ -15,6 +15,15 @@ function mapUser(user: User): LocalUser {
     firstName: user.firstName!,
     lastName: user.lastName!,
     accessTokensCount: user.accessTokensCount!,
+    registrations: user.registrations!.map((registration) => ({
+      id: registration.id!,
+      application: {
+        id: registration.applicationId!,
+        title: registration.application?.title ?? '',
+      },
+      createdAt: registration.createdAt!,
+      accessTokensCount: registration.accessTokens.length,
+    })),
   };
 }
 
@@ -48,6 +57,7 @@ export const $firstName = restore(firstNameChanged, '');
 export const $lastName = restore(lastNameChanged, '');
 export const $isUserFound = createStore(false);
 export const $profileLoading = userLoadFx.pending;
+export const $registrations = createStore<Registration[]>([]);
 
 const $userId = hatch.$params.map((params) => params['userId']);
 
@@ -55,7 +65,7 @@ sample({ clock: [hatch.enter, hatch.update], source: $userId, target: userLoadFx
 
 $isUserFound.on(userLoadFx.doneData, (_, user) => user !== null);
 
-const userLoaded = guard({
+const userLoaded = sample({
   clock: [userLoadFx.doneData, userSaveFx.doneData],
   filter: (user): user is LocalUser => user !== null,
 });
@@ -67,6 +77,7 @@ spread({
     email: $email,
     firstName: $firstName,
     lastName: $lastName,
+    registrations: $registrations,
   },
 });
 

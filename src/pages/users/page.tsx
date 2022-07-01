@@ -115,7 +115,7 @@ function UserRow({ user }: { user: LocalUser }) {
           className="px-4 py-2 whitespace-nowrap text-right text-md lg:text-sm font-medium text-indigo-600
           hover:text-indigo-900 hover:bg-indigo-50 border-transparent border rounded-md"
         >
-          Open
+          Edit
         </Link>
       </Column>
     </Row>

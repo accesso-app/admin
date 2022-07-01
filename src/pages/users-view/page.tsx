@@ -1,8 +1,10 @@
 import { createEvent, createStore } from 'effector';
 import { useEvent, useStore } from 'effector-react/scope';
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 import { NavigationTemplate, StackedTemplate } from '~/entities/navigation';
+import { paths } from '~/pages/paths';
 import {
   ButtonPrimary,
   Card,
@@ -13,6 +15,8 @@ import {
   Paragraph,
   Separator,
 } from '~/shared/ui';
+
+import { Registration } from './common';
 
 export const profileSubmitted = createEvent();
 
@@ -27,6 +31,7 @@ export const $originalName = createStore('');
 export const $id = createStore('');
 export const $isUserFound = createStore(false);
 export const $profileLoading = createStore(false);
+export const $registrations = createStore<Registration[]>([]);
 
 export function UsersViewPage() {
   // TODO: add breadcrumbs
@@ -59,9 +64,7 @@ function UserView() {
   return (
     <div className="space-y-10 sm:space-y-0">
       <Profile />
-      <Separator />
       <Registrations />
-      <Separator />
       <Actions />
     </div>
   );
@@ -139,45 +142,81 @@ function Profile() {
 }
 
 function Registrations() {
+  const registrations = useStore($registrations);
+
+  if (registrations.length === 0) return null;
+
   return (
-    <DescriptionTemplate
-      description={
-        <Paragraph title="Registrations">List of applications where user registered.</Paragraph>
-      }
-    >
-      <Card className="space-y-5">
-        <Note text="This section temporary disabled" />
-        <div>There will be list of applications the user registered in.</div>
-      </Card>
-    </DescriptionTemplate>
+    <>
+      <Separator />
+      <DescriptionTemplate
+        description={
+          <Paragraph title="Registrations">List of applications where user registered.</Paragraph>
+        }
+      >
+        <Card className="space-y-5">
+          <h2 className="text-xl select-none">Applications user registered in</h2>
+          <div className="divide-y divide-gray-500 table w-full">
+            <div className="table-row-group">
+              {registrations.map((registration) => (
+                <div key={registration.id} className="table-row">
+                  <div className="table-cell">
+                    <Link
+                      to={paths.applicationsView(registration.application.id)}
+                      title="View application"
+                      className=" px-4 lg:-ml-4 py-2 whitespace-nowrap text-right text-md lg:text-sm font-medium text-indigo-600
+                  hover:text-indigo-900 hover:bg-indigo-50 border-transparent border rounded-md"
+                    >
+                      {registration.application.title}
+                    </Link>
+                  </div>
+                  <div className="table-cell">{registration.createdAt}</div>
+                  <div className="table-cell">{registration.accessTokensCount}</div>
+                </div>
+              ))}
+              {registrations.length === 0 ? (
+                <div className="table-cell col-span-3 text-center select-none">
+                  No registrations at the moment
+                </div>
+              ) : null}
+            </div>
+          </div>
+        </Card>
+      </DescriptionTemplate>
+    </>
   );
 }
 
 function Actions() {
   return (
-    <DescriptionTemplate
-      description={
-        <Paragraph title="Special actions">List of actions with dangerous implications.</Paragraph>
-      }
-    >
-      <Card className="space-y-5">
-        <Note text="This section temporary disabled" />
+    <>
+      <Separator />
+      <DescriptionTemplate
+        description={
+          <Paragraph title="Access to Accesso">
+            Actions changes user's credentials and tokens.
+          </Paragraph>
+        }
+      >
+        <Card className="space-y-5">
+          <Note text="This section temporary disabled" />
 
-        <div className="flex flex-col items-start space-y-2">
-          <h4 className="text-xl">Finish all active sessions</h4>
-          <p className="text-gray-500 text-sm pb-2">
-            Deleting all active sessions is unrecoverable. User will be required to log in again.
-          </p>
-          <ButtonPrimary>Finish all session tokens</ButtonPrimary>
-        </div>
-        <div className="flex flex-col items-start space-y-2">
-          <h4 className="text-xl">Set a new password</h4>
-          <p className="text-gray-500 text-sm pb-2">
-            A new password will be generated for a user. Sessions won't be finished.
-          </p>
-          <ButtonPrimary>Reset password</ButtonPrimary>
-        </div>
-      </Card>
-    </DescriptionTemplate>
+          <div className="flex flex-col items-start space-y-2">
+            <h4 className="text-xl">Finish all active sessions</h4>
+            <p className="text-gray-500 text-sm pb-2">
+              Deleting all active sessions is unrecoverable. User will be required to log in again.
+            </p>
+            <ButtonPrimary>Finish all session tokens</ButtonPrimary>
+          </div>
+          <div className="flex flex-col items-start space-y-2">
+            <h4 className="text-xl">Set a new password</h4>
+            <p className="text-gray-500 text-sm pb-2">
+              A new password will be generated for a user. Sessions won't be finished.
+            </p>
+            <ButtonPrimary>Reset password</ButtonPrimary>
+          </div>
+        </Card>
+      </DescriptionTemplate>
+    </>
   );
 }
